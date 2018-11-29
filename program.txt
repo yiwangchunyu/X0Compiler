@@ -1,0 +1,9 @@
+main
+{
+	int a;
+	int b;
+	int array[10];
+	a=1;
+	if(a==1) b=2; else b=-2;
+	while(a!=10) a=a+1;
+}
