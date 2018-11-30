@@ -23,6 +23,7 @@ semicolon   ";"
 period      "."
 becomes     "="
 
+main        "main"
 ifsym       "if"
 elsesym     "else"
 whilesym    "while"
@@ -61,6 +62,7 @@ NUM         ([0-9])+
 {period}    {printf("period ");}
 {becomes}   {printf("becomes ");}
 
+mainsym     {printf("main");}
 {ifsym}     {printf("ifsym ");}
 {elsesym}   {printf("elsesym ");}
 {whilesym}  {printf("whilesym ");}

@@ -1,2 +1,1 @@
-lex ./compiler.l && gcc -o compiler ./lex.yy.c && ./compiler ./program.txt >> lexer_out.txt  
-cat lexer_out.txt
+lex ./$1".l" && gcc -o $1 ./lex.yy.c && ./$1 ./$1".txt" > $1".l.out" && cat $1".l.out"
