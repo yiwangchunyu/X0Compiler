@@ -27,7 +27,7 @@ FILE *yyin;
 
 %%
 program:
-    program MAIN LBRACE declaration_list statement_list RBRACE {printf("main over");}
+    MAIN LBRACE declaration_list statement_list RBRACE {printf("main over");}
     ;
 
 declaration_list:
