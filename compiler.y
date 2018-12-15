@@ -137,6 +137,7 @@ write_stat:
                                     gen(opr,0,14);
                                 }
     |WRITE var SEMICOLON        {
+                                    gen(lod,0,table[$2].adr);
                                     if(table[$2].type==char_t)
                                         gen(opr,0,17);
                                     else if(table[$2].type==int_t)

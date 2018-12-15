@@ -2,9 +2,12 @@ main
 {
 char s;
 int a;
+int b;
+int c;
 a=1;
-if(a>2)
-	{
-		write a;
-	}
+c=99;
+b=2;
+
+write a;
+
 }
