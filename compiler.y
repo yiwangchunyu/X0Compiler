@@ -8,9 +8,10 @@
 %type <number> var
 %type <number> get_code_addr
 
-%left    ELSE
+
 %left    PLUS MINUS
 %left    TIMES SLASH
+%nonassoc ELSE
 
 
 %{
@@ -113,10 +114,9 @@ statement:
     ;
 
 if_stat:
-    IF LPAREN expression RPAREN statement ELSE statement {}
-    |IF LPAREN expression RPAREN get_code_addr  {
+    IF LPAREN expression RPAREN get_code_addr   {
                                                     gen(jpc, 0, 0);
-                                                }
+                                                } 
     statement   {
                     code[$5].a = cx;
                 }
@@ -167,11 +167,11 @@ expression:
                                 gen(sto,0,table[$1].adr);
                                 gen(lod,0,table[$1].adr);
                             }
-    | simple_expr {}
+    | simple_expr {printf("\nsimple_expr\n");}
     ;
 
 simple_expr:
-    additive_expr {}
+    additive_expr {printf("\nadditive_expr\n");}
     | additive_expr GTR additive_expr   {
                                             gen(opr,0,12);
                                         }
@@ -216,7 +216,7 @@ term:
     ;
 
 factor:
-    LPAREN expression RPAREN {}
+    LPAREN expression RPAREN {printf("\nfactor\n");}
     |var    {
                 switch(table[$1].kind){
                     case constant:
