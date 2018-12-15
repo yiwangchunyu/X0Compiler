@@ -18,7 +18,7 @@ int array_dim;
 char id[AL];
 
 enum object{constant,variable,procedur};
-enum type_e{int_t,char_t};
+enum type_e{int_t,char_t, none_t};
 enum object kind;
 enum type_e type;
 
@@ -118,6 +118,9 @@ void printTable(int tofile)
 				break;
 			case char_t:
 				strcpy(type, "char");
+				break;
+			case none_t:
+				strcpy(type, "none");
 				break;
 		}
 		if(table[i].array)

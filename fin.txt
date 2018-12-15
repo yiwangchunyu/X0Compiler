@@ -3,7 +3,4 @@ main
 char s;
 int a;
 a=1;
-s='a';
-write s;
-write a;
 }

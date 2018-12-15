@@ -42,6 +42,9 @@ program:
                     }
     declaration_list    {
                             code[table[procReg.tx0].adr].a=cx;
+                            strcpy(table[procReg.tx0].name,"main");
+                            table[procReg.tx0].kind=procedur;
+                            table[procReg.tx0].type=none_t;
                             table[procReg.tx0].adr=cx;
                             table[procReg.tx0].size=dx;
                             procReg.cx0=cx;
