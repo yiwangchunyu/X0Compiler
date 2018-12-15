@@ -51,6 +51,10 @@ NUM         ([0-9])+
 "call"   {return CALL;}
 "int"      {return INT;}
 "char"      {return CHAR;}
+'[^'\n]'			{
+							yylval.number=(int)(yytext[1]);
+							return NUM;
+						}
 
 {ID}        {
 				yylval.ident=(char *)malloc(strlen(yytext)+1);

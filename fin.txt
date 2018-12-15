@@ -1,9 +1,9 @@
 main
 {
-int i;
-int j;
-i=22;
-j=i+i*2;
-while(i>2) i=i-1;
-write i;
+char s;
+int a;
+a=1;
+s='a';
+write s;
+write a;
 }

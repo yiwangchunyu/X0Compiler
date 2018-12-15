@@ -181,6 +181,11 @@ void interpret()
 						scanf("%d",&s[t]);
 						fprintf(fa2,"%d",s[t]);
 						break;
+					case 17:	/*写字符*/
+						printf("%c",s[t]);
+						fprintf(fa2,"%c",s[t]);
+						t=t-1;
+						break;
 				}
 				break;	
 			case lod:

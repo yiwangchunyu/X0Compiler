@@ -6,7 +6,7 @@
 %token  MAIN IF ELSE WHILE WRITE READ DO CALL INT CHAR 
 
 %type <number> var
-%type <number> get_table_addr get_code_addr
+%type <number> get_code_addr
 
 %left    ELSE
 %left    PLUS MINUS
@@ -111,7 +111,12 @@ statement:
 
 if_stat:
     IF LPAREN expression RPAREN statement ELSE statement {}
-    |IF LPAREN expression RPAREN statement {}
+    |IF LPAREN expression RPAREN get_code_addr  {
+                                                    gen(jpc, 0, 0);
+                                                }
+    statement   {
+                    code[$5].a = cx;
+                }
     ;
 
 while_stat:
@@ -127,6 +132,14 @@ while_stat:
 write_stat:
     WRITE expression SEMICOLON  {
                                     gen(opr,0,14);
+                                }
+    |WRITE var SEMICOLON        {
+                                    if(table[$2].type==char_t)
+                                        gen(opr,0,17);
+                                    else if(table[$2].type==int_t)
+                                        gen(opr,0,14);
+                                    else
+                                        error(0);
                                 }
     ;
 
@@ -230,11 +243,13 @@ factor:
                 gen(lit,0,num);
             }
     ;
+/*
 get_table_addr:
                {
                 $$ = tx;
                } 
           ;
+*/
 get_code_addr:
                {
                 $$ = cx;
