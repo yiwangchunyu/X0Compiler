@@ -6,6 +6,9 @@
 %token  MAIN IF ELSE WHILE WRITE READ DO CALL INT CHAR 
 
 %type <number> var
+%type <number> get_table_addr get_code_addr
+
+%left    ELSE
 %left    PLUS MINUS
 %left    TIMES SLASH
 
@@ -112,7 +115,13 @@ if_stat:
     ;
 
 while_stat:
-    WHILE LPAREN expression RPAREN statement {}
+    WHILE get_code_addr LPAREN expression RPAREN get_code_addr  {
+                                                                    gen(jpc, 0 , 0);
+                                                                }
+    statement   {
+                    gen(jmp, 0, $2);
+                    code[$6].a = cx;
+                }
     ;
 
 write_stat:
@@ -221,7 +230,16 @@ factor:
                 gen(lit,0,num);
             }
     ;
-
+get_table_addr:
+               {
+                $$ = tx;
+               } 
+          ;
+get_code_addr:
+               {
+                $$ = cx;
+               }
+          ;
 %%
 
 

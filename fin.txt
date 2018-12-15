@@ -4,6 +4,6 @@ int i;
 int j;
 i=22;
 j=i+i*2;
-write j;
+while(i>2) i=i-1;
 write i;
 }
