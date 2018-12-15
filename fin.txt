@@ -1,0 +1,9 @@
+main
+{
+int i;
+int j;
+i=22;
+j=i+i*2;
+write j;
+write i;
+}

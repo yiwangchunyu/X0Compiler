@@ -5,6 +5,7 @@
 #include "string.h"
 #include "malloc.h"
 int line = 0;
+char msg[50];
 int yywrap();
 void yyerror(char*);
 %} 
@@ -51,18 +52,26 @@ NUM         ([0-9])+
 "int"      {return INT;}
 "char"      {return CHAR;}
 
-{ID}            {return ID;}
-{NUM}           {return NUM;}
+{ID}        {
+				yylval.ident=(char *)malloc(strlen(yytext)+1);
+				strcpy(yylval.ident,yytext);
+				return ID;
+			}
+
+{NUM}       {
+				yylval.number=atoi(yytext);
+				return NUM;
+			}
 
 .           {   
-                yyerror("无效的输入字符:");
-                printf("%d\n", *yytext);
+				sprintf(msg,"yyerror: unexpected character %s",yytext);
+                yyerror(msg);
             }
 
 %% 
 
 int yywrap(void) 
 {
-    printf("\ndone!\n"); 
+    printf("\nlex done!\n"); 
     return 1; 
 }
