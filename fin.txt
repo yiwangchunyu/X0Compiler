@@ -3,11 +3,10 @@ main
 char s;
 int a;
 int b;
-int c;
 a=1;
-c=99;
 b=2;
-
+if(a>2) write a;
+else
+a=9;
 write a;
-
 }

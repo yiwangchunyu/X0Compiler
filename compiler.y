@@ -7,6 +7,7 @@
 
 %type <number> var
 %type <number> get_code_addr
+%type <number> else_stat
 
 
 %left    PLUS MINUS
@@ -26,11 +27,16 @@ void yyerror(char*);
 int yylex(void);
 FILE *yout;
 FILE *yyin;
+typedef struct databus{
+    int d1;
+    int d2;
+}databus;
 %}
 
 %union{
 char *ident;
 int number;
+void* ptr;
 }
 
 %%
@@ -117,9 +123,22 @@ if_stat:
     IF LPAREN expression RPAREN get_code_addr   {
                                                     gen(jpc, 0, 0);
                                                 } 
-    statement   {
-                    code[$5].a = cx;
+    statement else_stat   {
+                    code[$5].a = $8;
                 }
+    ;
+
+else_stat:
+    ELSE get_code_addr  {
+                            gen(jmp,0,0);
+                        } 
+    statement   {
+                    $$=$2+1;
+                    code[$2].a=cx;
+                }
+    |   {
+            $$ = cx;
+        }
     ;
 
 while_stat:
