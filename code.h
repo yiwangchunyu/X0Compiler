@@ -186,6 +186,16 @@ void interpret()
 						fprintf(fa2,"%c",s[t]);
 						t=t-1;
 						break;
+					case 18:	/*写栈顶值所在的数据单元int*/
+						printf("%d",s[s[t]]);
+						fprintf(fa2,"%d",s[s[t]]);
+						t=t-1;
+						break;
+					case 19:	/*写栈顶值所在的数据单元char*/
+						printf("%c",s[s[t]]);
+						fprintf(fa2,"%c",s[s[t]]);
+						t=t-1;
+						break;
 				}
 				break;	
 			case lod:
@@ -200,9 +210,9 @@ void interpret()
 				}
 				break;
 			case sto:
-				if(i.a==0)/*sto到栈顶值所在的数据单元，数据源为次栈顶*/
+				if(i.a==0)/*sto到次栈顶值所在的数据单元，数据源为栈顶*/
 				{
-					s[base(i.l,b,s)+s[t]]=s[t-1];
+					s[base(i.l,b,s)+s[t-1]]=s[t];
 					t=t-2;
 				}
 				else

@@ -1,14 +1,17 @@
 %token  <ident> ID 
 %token  <number> NUM
+%token  <type>  INT CHAR 
 %token  PLUS MINUS TIMES SLASH EQL NEQ LES LEQ GTR GEQ 
 %token  LPAREN RPAREN LBRACKETS RBRACKETS LBRACE RBRACE 
 %token  COMMA SEMICOLON PERIOD BECOMES 
-%token  MAIN IF ELSE WHILE WRITE READ DO CALL INT CHAR 
+%token  MAIN IF ELSE WHILE WRITE READ DO CALL
 
 %type <number> var
 %type <number> get_code_addr
 %type <number> else_stat
-
+%type <number> array_size
+%type <number> array_loc
+%type <type> type
 
 %left    PLUS MINUS
 %left    TIMES SLASH
@@ -37,6 +40,7 @@ typedef struct databus{
 char *ident;
 int number;
 void* ptr;
+char *type;
 }
 
 %%
@@ -72,24 +76,39 @@ declaration_list:
      ;
 
 declaration_stat:
-    type ID SEMICOLON   { 
-                            array=0;
-                            strcpy(id,$2);
-                            enter(variable);
-                        }
-    |type ID LBRACKETS NUM RBRACKETS SEMICOLON  {
-                                                    array=1;
-                                                    array_size=(int*)malloc(sizeof(int));
-                                                    *array_size = $4;
-                                                    array_dim=1;
-                                                    strcpy(id,$2);
-                                                    enter(variable);
-                                                }
+    type ID array_size SEMICOLON    {
+                                        if(strcmp($1,"int")==0){
+                                            type=int_t;
+                                        } else if(strcmp($1,"char")==0){
+                                            type=char_t;
+                                        } else{
+                                            type=none_t;
+                                        }
+
+                                        if(array==1){
+                                            array_size=(int*)malloc(sizeof(int));
+                                            *array_size = $3;
+                                            array_dim=1;
+                                            strcpy(id,$2);
+                                            enter(variable);
+                                        }else
+                                        {
+                                            strcpy(id,$2);
+                                            enter(variable);
+                                        }
+                                        type=none_t;
+                                    }
     ;
 
+array_size:
+    LBRACKETS NUM RBRACKETS     {array=1;$$=$2;}
+    |   {   
+            array=0;
+        }
+    ;
 type:
-    INT {type=int_t;}
-    |CHAR {type=char_t;}
+    INT {$$=$1;}
+    |CHAR {$$=$1;}
     ;
 
 var:
@@ -100,9 +119,11 @@ var:
             }
             $$ = i;
         }
+    /*
     | ID LBRACKETS expression RBRACKETS     {
                                                 $$ = position ($1);
                                             }
+    */
     ;
 
 statement_list:
@@ -163,7 +184,15 @@ write_stat:
                                         gen(opr,0,14);
                                     else
                                         error(0);
-                                }
+                                                
+                                }   
+    ;
+
+array_loc:
+    LBRACKETS expression RBRACKETS          {
+                                                $$=1;   
+                                            }
+    |   {$$=0;}
     ;
 
 read_stat:
@@ -183,10 +212,20 @@ expression_stat:
     ;
 
 expression:
-    var BECOMES expression  {
-                                gen(sto,0,table[$1].adr);
-                                gen(lod,0,table[$1].adr);
-                            }
+    var array_loc   {
+                        if($2==1){
+                            gen(lit,0,table[$1].adr);
+                            gen(opr,0,2);
+                        }
+                    }
+                    BECOMES expression    {
+                                            if($2==1){
+                                                gen(sto,0,0);
+                                            }else{
+                                                gen(sto,0,table[$1].adr);
+                                                gen(lod,0,table[$1].adr);
+                                            }
+                                        }
     | simple_expr {printf("\nsimple_expr\n");}
     ;
 
@@ -237,24 +276,34 @@ term:
 
 factor:
     LPAREN expression RPAREN {printf("\nfactor\n");}
-    |var    {
-                switch(table[$1].kind){
-                    case constant:
-                        gen(lit,0,table[$1].val);
-                        break;
-                    case variable:
-                        if (table[$1].array)
-                        {
-                            gen(lod,0,table[$1].adr+0);
-                        }else
-                        {
-                            gen(lod,0,table[$1].adr);
-                        }
-                        break;
-                    case procedur:
-                        error(21);
-                        break;
+    |var  array_loc {
+                if($2==1){
+                    if(table[$1].kind==variable){
+                        gen(lit,0,table[$1].adr);
+                        gen(opr,0,2);
+                        gen(lod,0,0);
+                    }else{
+                        error(0);
                     }
+                }else{
+                    switch(table[$1].kind){
+                        case constant:
+                            gen(lit,0,table[$1].val);
+                            break;
+                        case variable:
+                            if (table[$1].array)
+                            {
+                                gen(lod,0,table[$1].adr+0);
+                            }else
+                            {
+                                gen(lod,0,table[$1].adr);
+                            }
+                            break;
+                        case procedur:
+                            error(21);
+                            break;
+                        }
+                }
             }
     |NUM    {
                 int num;

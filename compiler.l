@@ -50,13 +50,13 @@ NUM         ([0-9])+
 "do"     {return DO;}
 "call"   {return CALL;}
 "int"      	{	
-				/*yylval.type = (char *)malloc(strlen(yytext)+1);
-				strcpy(yylval.type,yytext);*/
+				yylval.type = (char *)malloc(strlen(yytext)+1);
+				strcpy(yylval.type,yytext);
 				return INT;
 			}
 "char"      {	
-				/*yylval.type = (char *)malloc(strlen(yytext)+1);
-				strcpy(yylval.type,yytext);*/
+				yylval.type = (char *)malloc(strlen(yytext)+1);
+				strcpy(yylval.type,yytext);
 				return CHAR;
 			}
 '[^'\n]'			{

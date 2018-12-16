@@ -2,13 +2,10 @@ main
 {
 char s;
 int a;
-int b;
-a=5;
-b=2;
-s='s';
-if(a>2) a=8;
-else
-a=0;
+int c;
+int b[5];
+a=97;
+b[0]=22;
 write a;
-write s;
+write b;
 }
