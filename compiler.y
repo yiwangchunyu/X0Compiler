@@ -27,6 +27,7 @@
 #include "code.h"
 #include "malloc.h"
 void yyerror(char*);
+void syntax_error(char* s);
 int yylex(void);
 FILE *yout;
 FILE *yyin;
@@ -196,10 +197,18 @@ array_loc:
     ;
 
 read_stat:
-    READ var SEMICOLON  {
-                            gen(opr,0,16);
-                            gen(sto,0,table[$2].adr);
-                        }
+    READ var array_loc SEMICOLON    {
+                                        if($3==1){
+                                            gen(lit,0,table[$2].adr);
+                                            gen(opr,0,2);
+                                            gen(opr,0,16);
+                                            gen(sto,0,0);
+                                        }else{
+                                            gen(opr,0,16);
+                                            gen(sto,0,table[$2].adr);
+                                        }
+                            
+                                    }
     ;
 
 compound_stat:
@@ -226,11 +235,11 @@ expression:
                                                 gen(lod,0,table[$1].adr);
                                             }
                                         }
-    | simple_expr {printf("\nsimple_expr\n");}
+    | simple_expr {}
     ;
 
 simple_expr:
-    additive_expr {printf("\nadditive_expr\n");}
+    additive_expr {}
     | additive_expr GTR additive_expr   {
                                             gen(opr,0,12);
                                         }
@@ -275,41 +284,43 @@ term:
     ;
 
 factor:
-    LPAREN expression RPAREN {printf("\nfactor\n");}
+    LPAREN expression RPAREN {}
     |var  array_loc {
-                if($2==1){
-                    if(table[$1].kind==variable){
-                        gen(lit,0,table[$1].adr);
-                        gen(opr,0,2);
-                        gen(lod,0,0);
-                    }else{
-                        error(0);
-                    }
-                }else{
-                    switch(table[$1].kind){
-                        case constant:
-                            gen(lit,0,table[$1].val);
-                            break;
-                        case variable:
-                            if (table[$1].array)
-                            {
-                                gen(lod,0,table[$1].adr+0);
-                            }else
-                            {
-                                gen(lod,0,table[$1].adr);
+                        if($2==1){
+                            if(table[$1].kind==variable){
+                                gen(lit,0,table[$1].adr);
+                                gen(opr,0,2);
+                                gen(lod,0,0);
+                            }else{
+                                error(0);
                             }
-                            break;
-                        case procedur:
-                            error(21);
-                            break;
-                        }
-                }
+                        }else{
+                            switch(table[$1].kind){
+                                case constant:
+                                    gen(lit,0,table[$1].val);
+                                    break;
+                                case variable:
+                                    if (table[$1].array)
+                                    {
+                                        gen(lod,0,table[$1].adr+0);
+                                    }else
+                                    {
+                                        gen(lod,0,table[$1].adr);
+                                    }
+                                    break;
+                                case procedur:
+                                    error(21);
+                                    break;
+                                }
+                    }
             }
     |NUM    {
                 int num;
                 num=$1;
                 if(num>AMAX){
-                    error(31);
+                    char s[100];
+                    sprintf(s,"integer(%d) should not greater than %d, now 0 instead. ", $1, AMAX);
+                    syntax_error(s);
                     num=0;
                     }
                 gen(lit,0,num);
@@ -336,6 +347,9 @@ void yyerror(char *s){
     fprintf(fa1,"%s in line %d\n",s,line);
 }
 
+void syntax_error(char* s){
+    printf("syntax error in line %d: %s\n", line+1, s);
+}
 int main(int argc,char *argv[])
 {
     int i;

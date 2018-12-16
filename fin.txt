@@ -5,7 +5,7 @@ int a;
 int c;
 int b[5];
 a=97;
-b[0]=22;
+read b[0];
 write a;
-write b;
+write b[0];
 }
