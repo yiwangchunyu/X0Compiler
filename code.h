@@ -189,12 +189,27 @@ void interpret()
 				}
 				break;	
 			case lod:
-				t=t+1;
-				s[t]=s[base(i.l,b,s)+i.a];
+				if(i.a==0)/*lod栈顶值所在的数据单元*/
+				{
+					s[t]=s[base(i.l,b,s)+s[t]];
+				}
+				else
+				{
+					t=t+1;
+					s[t]=s[base(i.l,b,s)+i.a];
+				}
 				break;
 			case sto:
-				s[base(i.l,b,s)+i.a]=s[t];
-				t=t-1;
+				if(i.a==0)/*sto到栈顶值所在的数据单元，数据源为次栈顶*/
+				{
+					s[base(i.l,b,s)+s[t]]=s[t-1];
+					t=t-2;
+				}
+				else
+				{
+					s[base(i.l,b,s)+i.a]=s[t];
+					t=t-1;
+				}
 				break;
 			case cal:
 				s[t+1]=base(i.l,b,s);

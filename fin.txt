@@ -3,10 +3,12 @@ main
 char s;
 int a;
 int b;
-a=1;
+a=5;
 b=2;
-if(a>2) write a;
+s='s';
+if(a>2) a=8;
 else
-a=9;
+a=0;
 write a;
+write s;
 }

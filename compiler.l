@@ -49,8 +49,16 @@ NUM         ([0-9])+
 "read"   {return READ;}
 "do"     {return DO;}
 "call"   {return CALL;}
-"int"      {return INT;}
-"char"      {return CHAR;}
+"int"      	{	
+				yylval.type = (char *)malloc(strlen(yytext)+1);
+				strcpy(yylval.type,yytext);
+				return INT;
+			}
+"char"      {	
+				yylval.type = (char *)malloc(strlen(yytext)+1);
+				strcpy(yylval.type,yytext);
+				return CHAR;
+			}
 '[^'\n]'			{
 							yylval.number=(int)(yytext[1]);
 							return NUM;
