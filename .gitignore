@@ -1,5 +1,5 @@
-./*txt
-./compiler
+*txt
+compiler
 compiler.tab.c
 compiler.tab.h
 lex.yy.c

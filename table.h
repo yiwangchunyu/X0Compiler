@@ -13,10 +13,13 @@ int dx=0;
 int num;
 int size;
 int array;
-int* array_size;
+struct list* array_size;
 int array_dim;
 char id[AL];
-
+struct list{
+    int v;
+    struct list *next;
+};
 enum object{constant,variable,procedur};
 enum type_e{int_t,char_t, none_t};
 enum object kind;
@@ -29,7 +32,7 @@ struct table1{
 	enum object kind;
 	enum type_e type;
 	int val,adr,size,array,array_dim;
-	int *array_size;
+	struct list* array_size;
 	};
 struct table1 table[TXMAX+1];
 
@@ -39,6 +42,53 @@ int tx0;
 int cx0;
 };
 struct procReg1 procReg;
+
+int array_len(struct list* head)
+{
+	struct list* each = head;
+	int len=0;
+	if(head==NULL){
+		len=0;
+	}else{
+		do{
+			len++;
+			each = each->next;
+		}while(each->next!=NULL);
+	}
+	return len;
+}
+char* list_prints(struct list* head, char *s){
+	struct list* each = head;
+	strcpy(s,"");
+	char stmp[50]="";
+	if(head==NULL){
+		sprintf(s,"%d",0);
+	}else{
+		while(each!=NULL){
+			sprintf(stmp,"%d ",each->v);
+			strcat(s,stmp);
+			each = each->next;
+		}
+	}
+	return s;
+}
+struct list* list_add(struct list* head, int v)
+{
+	struct list* each = head;
+	if(head==NULL){
+		head = (struct list*)malloc(sizeof(struct list));
+		head->v=v;
+		head->next=NULL;
+	}else{
+		while(each->next!=NULL)
+			each = each->next;
+		struct list* tmp = (struct list*)malloc(sizeof(struct list));
+		tmp->v=v;
+		tmp->next=NULL;
+		each->next=tmp;
+	}
+	return head;
+}
 
 void enter(enum object k){
 	tx=tx+1;
@@ -61,12 +111,7 @@ void enter(enum object k){
 				table[tx].array=array;
 				table[tx].array_dim=array_dim;
 				table[tx].array_size=array_size;
-				int len = 1, i = 0;
-				for(i=0;i<array_dim;i++)
-				{
-					len*=array_size[i];
-				}
-				dx = dx+len;
+				dx += array_len(array_size);
 			}else{
 				dx++;
 			}
@@ -125,7 +170,7 @@ void printTable(int tofile)
 		}
 		if(table[i].array)
 		{
-			array_size0 = table[i].array_size[0];
+			array_size0 = table[i].array_size->v;
 		}
 		printf("%15s%15s%15d%15s%15d%15d%15d%15d%15d\n", table[i].name, kind, table[i].val, type, table[i].adr, table[i].size, table[i].array, table[i].array_dim, array_size0);
 	}

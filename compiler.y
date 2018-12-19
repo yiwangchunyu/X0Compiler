@@ -31,10 +31,8 @@ void syntax_error(char* s);
 int yylex(void);
 FILE *yout;
 FILE *yyin;
-typedef struct databus{
-    int d1;
-    int d2;
-}databus;
+int error_count;
+
 %}
 
 %union{
@@ -42,6 +40,7 @@ char *ident;
 int number;
 void* ptr;
 char *type;
+struct databus* db;
 }
 
 %%
@@ -87,9 +86,6 @@ declaration_stat:
                                         }
 
                                         if(array==1){
-                                            array_size=(int*)malloc(sizeof(int));
-                                            *array_size = $3;
-                                            array_dim=1;
                                             strcpy(id,$2);
                                             enter(variable);
                                         }else
@@ -102,9 +98,15 @@ declaration_stat:
     ;
 
 array_size:
-    LBRACKETS NUM RBRACKETS     {array=1;$$=$2;}
+    array_size LBRACKETS NUM RBRACKETS      {
+                                                array=1;
+                                                array_dim++;
+                                                array_size=list_add(array_size,$3);
+                                            }
     |   {   
             array=0;
+            array_dim=0;
+            array_size=NULL;
         }
     ;
 type:
@@ -348,6 +350,7 @@ void yyerror(char *s){
 }
 
 void syntax_error(char* s){
+    error_count++;
     printf("syntax error in line %d: %s\n", line+1, s);
 }
 int main(int argc,char *argv[])

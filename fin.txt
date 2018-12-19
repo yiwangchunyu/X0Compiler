@@ -3,9 +3,7 @@ main
 char s;
 int a;
 int c;
-int b[5];
+int b[2][5];
 a=97;
-read b[0];
 write a;
-write b[0];
 }
