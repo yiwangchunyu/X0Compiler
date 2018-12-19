@@ -1,9 +1,4 @@
 main
 {
-char s;
-int a;
-int c;
-int b[2][5];
-a=97;
-write a;
+int a[5];
 }

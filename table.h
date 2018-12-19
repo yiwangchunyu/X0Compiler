@@ -51,9 +51,9 @@ int array_len(struct list* head)
 		len=0;
 	}else{
 		do{
-			len++;
+			len+=each->v;
 			each = each->next;
-		}while(each->next!=NULL);
+		}while(each!=NULL);
 	}
 	return len;
 }
