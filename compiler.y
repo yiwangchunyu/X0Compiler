@@ -351,6 +351,10 @@ factor:
                         gen(lit,0,1);
                         gen(opr,0,2);
                         gen(sto,0,table[$1].adr);
+                    }else{
+                        char s[50];
+                        sprintf(s,"%s is an array, not a simple variable.", table[$1].name);
+                        syntax_error(s);
                     }
                 }
     |var SMINUS {
@@ -360,6 +364,10 @@ factor:
                         gen(lit,0,1);
                         gen(opr,0,3);
                         gen(sto,0,table[$1].adr);
+                    }else{
+                        char s[50];
+                        sprintf(s,"%s is an array, not a simple variable.", table[$1].name);
+                        syntax_error(s);
                     }
                 }
     |SPLUS var  {
@@ -369,6 +377,10 @@ factor:
                         gen(opr,0,2);
                         gen(sto,0,table[$2].adr);
                         gen(lod,0,table[$2].adr);
+                    }else{
+                        char s[50];
+                        sprintf(s,"%s is an array, not a simple variable.", table[$2].name);
+                        syntax_error(s);
                     }
                 }
     |SMINUS var {
@@ -378,6 +390,10 @@ factor:
                         gen(opr,0,3);
                         gen(sto,0,table[$2].adr);
                         gen(lod,0,table[$2].adr);
+                    }else{
+                        char s[50];
+                        sprintf(s,"%s is an array, not a simple variable.", table[$2].name);
+                        syntax_error(s);
                     }
                 }
     |NUM    {
