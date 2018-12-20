@@ -68,9 +68,9 @@ rnote		"*/"
 "else"   {return ELSE;}
 "while"  {return WHILE;}
 "for"		{return FOR;}
+"do"		{return DO;}
 "write"  {return WRITE;}
 "read"   {return READ;}
-"do"     {return DO;}
 "call"   {return CALL;}
 "int"      	{	
 				yylval.type = (char *)malloc(strlen(yytext)+1);

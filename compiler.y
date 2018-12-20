@@ -147,6 +147,7 @@ statement:
     |expression_stat {}
     /*|switch_case_stat {}*/
     |for_stat {}
+    |do_while_stat {}
     ;
 
 for_stat:
@@ -164,6 +165,12 @@ for_stat:
                                                         }
     ;
 
+do_while_stat:
+    DO LBRACE get_code_addr statement_list RBRACE WHILE LPAREN simple_expr RPAREN SEMICOLON get_code_addr   {
+                                                                                                                gen(jpc,0,$11+2);
+                                                                                                                gen(jmp,0,$3);
+                                                                                                            }
+    ;
 /*switch_case_stat:
     SWITCH LPAREN expression RPAREN LBRACE case_list default_stat RBRACE {}
     ;
