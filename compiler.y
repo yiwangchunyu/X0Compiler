@@ -152,31 +152,58 @@ statement:
     ;
 
 for_stat:
-    FOR LPAREN expression SEMICOLON get_code_addr simple_expr SEMICOLON get_code_addr   {
+    FOR LPAREN for_exp1 SEMICOLON get_code_addr for_exp2 SEMICOLON get_code_addr    {
                                                                                             gen(jpc,0,0);
                                                                                             gen(jmp,0,0);
-                                                                                        }
-    expression  {
+                                                                                    }
+    for_exp3    {
                     gen(jmp,0,$5);
                 }
-    RPAREN LBRACE get_code_addr statement_list RBRACE   {
-                                                            gen(jmp,0,$8+2);
-                                                            code[$8].a=cx;
-                                                            code[$8+1].a=$14;
-                                                        }
+    RPAREN get_code_addr for_stat_list  {
+                                            gen(jmp,0,$8+2);
+                                            code[$8].a=cx;
+                                            code[$8+1].a=$13;
+                                        }
+    ;
+
+for_exp1:
+    expression  {}
+    |   {}
+    ;
+
+for_exp2:
+    simple_expr  {}
+    |   {}
+    ;
+
+for_exp3:
+    expression  {}
+    |   {}
+    ;
+
+for_stat_list:
+    statement  {}
     ;
 
 do_while_stat:
-    DO LBRACE get_code_addr statement_list RBRACE WHILE LPAREN simple_expr RPAREN SEMICOLON get_code_addr   {
-                                                                                                                gen(jpc,0,$11+2);
-                                                                                                                gen(jmp,0,$3);
+    DO get_code_addr do_while_stat_list WHILE LPAREN simple_expr RPAREN SEMICOLON get_code_addr   {
+                                                                                                                gen(jpc,0,$9+2);
+                                                                                                                gen(jmp,0,$2);
                                                                                                             }
     ;
 
+do_while_stat_list:
+    statement  {}
+    ;
+
 repeat_until_stat:
-    REPEAT LBRACE get_code_addr statement_list RBRACE UNTIL LPAREN simple_expr RPAREN SEMICOLON     {
-                                                                                                        gen(jpc,0,$3);
-                                                                                                    }
+    REPEAT get_code_addr repeat_until_stat_list UNTIL LPAREN simple_expr RPAREN SEMICOLON   {
+                                                                                                gen(jpc,0,$2);
+                                                                                            }
+    ;
+
+repeat_until_stat_list:
+    statement  {}
     ;
 /*switch_case_stat:
     SWITCH LPAREN expression RPAREN LBRACE case_list default_stat RBRACE {}
