@@ -4,7 +4,7 @@
 %token  PLUS MINUS TIMES SLASH EQL NEQ LES LEQ GTR GEQ MOD XOR ODD SPLUS SMINUS UMINUS
 %token  LPAREN RPAREN LBRACKETS RBRACKETS LBRACE RBRACE 
 %token  COMMA SEMICOLON PERIOD BECOMES COLON
-%token  MAIN IF ELSE WHILE WRITE READ DO CALL SWITCH CASE DEFAULT BREAK CONTINUE FOR REPEAT UNTIL
+%token  MAIN IF ELSE WHILE WRITE READ DO CALL SWITCH CASE DEFAULT BREAK CONTINUE FOR REPEAT UNTIL EXIT
 
 %type <number> var
 %type <number> get_code_addr
@@ -12,6 +12,8 @@
 %type <number> array_size
 %type <number> array_loc
 %type <type> type
+%type <number> statement
+%type <number> loop_stat_list
 
 %right   ODD
 %left    XOR
@@ -151,22 +153,27 @@ statement:
     |for_stat {}
     |do_while_stat {}
     |repeat_until_stat {}
-    |break_stat {}
-    |continue_stat {}
+    |exit_stat {}
     ;
 
+exit_stat:
+    EXIT SEMICOLON {gen(ext,0,0);}
+    ;
+
+/*
 break_stat:
     BREAK SEMICOLON {
         printf("list_add******************\n");
-                /*break_to_cxs = list_add(break_to_cxs,cx);
-                gen(jmp,0,0);*/
+                break_to_cxs = list_add(break_to_cxs,cx);
+                gen(jmp,0,0);
             }
     ;
 
 continue_stat:
     CONTINUE SEMICOLON{}
     ;
-
+*/
+    
 for_stat:
     FOR LPAREN for_exp1 SEMICOLON get_code_addr for_exp2 SEMICOLON get_code_addr    {
                                                                                             gen(jpc,0,0);
@@ -175,11 +182,8 @@ for_stat:
     for_exp3    {
                     gen(jmp,0,$5);
                 }
-    RPAREN get_code_addr for_stat_list  {
+    RPAREN get_code_addr loop_stat_list  {
                                             gen(jmp,0,$8+2);
-                                            /*int break_cx = list_get_last(break_to_cxs);
-                                            list_del_last(break_to_cxs);
-                                            code[break_cx].a=cx;*/
                                             code[$8].a=cx;
                                             code[$8+1].a=$13;
                                         }
@@ -200,7 +204,7 @@ for_exp3:
     |   {}
     ;
 
-for_stat_list:
+loop_stat_list:
     statement  {}
     ;
 

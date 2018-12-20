@@ -4,9 +4,9 @@
 int cx,cx1,cx2;
 int err;
 
-enum fct{lit,opr,lod,sto,cal,ini,jmp,jpc};
+enum fct{lit,opr,lod,sto,cal,ini,jmp,jpc,ext};
 
-char *mnemonic[8]={"lit","opr","lod","sto","cal","ini","jmp","jpc"};
+char *mnemonic[9]={"lit","opr","lod","sto","cal","ini","jmp","jpc", "ext"};
 
 FILE *fa;
 FILE *fa1,*fa2;
@@ -245,6 +245,9 @@ void interpret()
 				if(s[t]==0)
 					p=i.a;
 				t=t-1;
+				break;
+			case ext:						/* exit */
+				exit(0);
 				break;
 			}
 		}while(p!=0);

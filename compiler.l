@@ -75,6 +75,7 @@ rnote		"*/"
 "write"  {return WRITE;}
 "read"   {return READ;}
 "call"   {return CALL;}
+"exit"		{return EXIT;}
 "int"      	{	
 				yylval.type = (char *)malloc(strlen(yytext)+1);
 				strcpy(yylval.type,yytext);
