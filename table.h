@@ -23,7 +23,7 @@ struct list{
     struct list *next;
 };
 enum object{constant,variable,procedur};
-enum type_e{int_t,char_t, none_t};
+enum type_e{int_t,char_t, bool_t, none_t};
 enum object kind;
 enum type_e type;
 
@@ -230,6 +230,9 @@ void printTable(int tofile)
 				break;
 			case char_t:
 				strcpy(type, "char");
+				break;
+			case bool_t:
+				strcpy(type, "bool");
 				break;
 			case none_t:
 				strcpy(type, "none");

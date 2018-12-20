@@ -203,6 +203,22 @@ void interpret()
 						t=t-1;
 						s[t]=s[t]^s[t+1];
 						break;
+					case 22:	/*and*/
+						t=t-1;
+						s[t]=s[t]&&s[t+1];
+						break;
+					case 23:	/*or*/
+						t=t-1;
+						s[t]=s[t]||s[t+1];
+						break;
+					case 24:	/*not*/
+						s[t]=!s[t];
+						break;
+					case 25:	/*写bool*/
+						printf("%s",s[t]==0?"false":"true");
+						fprintf(fa2,"%s",s[t]==0?"false":"true");
+						t=t-1;
+						break;
 				}
 				break;	
 			case lod:

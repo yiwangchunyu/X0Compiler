@@ -86,6 +86,15 @@ rnote		"*/"
 				strcpy(yylval.type,yytext);
 				return CHAR;
 			}
+"bool"      {	
+				yylval.type = (char *)malloc(strlen(yytext)+1);
+				strcpy(yylval.type,yytext);
+				return BOOL;
+			}
+"and"		{return AND;}
+"or"		{return OR;}
+"not"		{return NOT;}
+
 '[^'\n]'			{
 							yylval.number=(int)(yytext[1]);
 							return NUM;

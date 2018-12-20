@@ -1,7 +1,7 @@
 %token  <ident> ID 
 %token  <number> NUM
-%token  <type>  INT CHAR 
-%token  PLUS MINUS TIMES SLASH EQL NEQ LES LEQ GTR GEQ MOD XOR ODD SPLUS SMINUS UMINUS
+%token  <type>  INT CHAR  BOOL
+%token  PLUS MINUS TIMES SLASH EQL NEQ LES LEQ GTR GEQ MOD XOR ODD SPLUS SMINUS UMINUS AND OR NOT
 %token  LPAREN RPAREN LBRACKETS RBRACKETS LBRACE RBRACE 
 %token  COMMA SEMICOLON PERIOD BECOMES COLON
 %token  MAIN IF ELSE WHILE WRITE READ DO CALL SWITCH CASE DEFAULT BREAK CONTINUE FOR REPEAT UNTIL EXIT
@@ -16,10 +16,13 @@
 %type <number> loop_stat_list
 
 %right   ODD
+%left    OR
+%left    AND
 %left    XOR
 %left    PLUS MINUS
 %left    TIMES SLASH MOD
-%left    SPLUS SMINUS UMINUS
+%left    SPLUS SMINUS UMINUS 
+%right NOT
 %nonassoc ELSE
 
 
@@ -86,6 +89,8 @@ declaration_stat:
                                             type=int_t;
                                         } else if(strcmp($1,"char")==0){
                                             type=char_t;
+                                        }else if(strcmp($1,"bool")==0){
+                                            type=bool_t;
                                         } else{
                                             type=none_t;
                                         }
@@ -117,6 +122,7 @@ array_size:
 type:
     INT {$$=$1;}
     |CHAR {$$=$1;}
+    |BOOL {$$=$1;}
     ;
 
 var:
@@ -173,7 +179,7 @@ continue_stat:
     CONTINUE SEMICOLON{}
     ;
 */
-    
+
 for_stat:
     FOR LPAREN for_exp1 SEMICOLON get_code_addr for_exp2 SEMICOLON get_code_addr    {
                                                                                             gen(jpc,0,0);
@@ -282,6 +288,8 @@ write_stat:
                                         gen(opr,0,17);
                                     else if(table[$2].type==int_t)
                                         gen(opr,0,14);
+                                    else if(table[$2].type==bool_t)
+                                        gen(opr,0,25);
                                     else
                                         error(0);
                                                 
@@ -371,6 +379,15 @@ simple_expr:
     | additive_expr NEQ additive_expr   {
                                             gen(opr,0,9);
                                         }
+    | additive_expr AND additive_expr   {
+                                            gen(opr,0,22);
+                                        }
+    | additive_expr OR additive_expr   {
+                                            gen(opr,0,23);
+                                        }
+    |NOT additive_expr   {
+                                            gen(opr,0,24);
+                                        }                                    
     ;
 
 /*
