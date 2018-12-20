@@ -247,7 +247,7 @@ void interpret()
 				t=t-1;
 				break;
 			case ext:						/* exit */
-				exit(0);
+				p=0;
 				break;
 			}
 		}while(p!=0);
