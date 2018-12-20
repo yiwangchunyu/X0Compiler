@@ -14,12 +14,21 @@ void yyerror(char*);
 whitespace  ([ \t\n])+
 ID          [a-zA-Z_]([a-zA-Z_]|[0-9])*
 NUM         ([0-9])+
-
+lnote		"/*"
+rnote		"*/"
 
 %% 
 [ \t]	{;}
 [\n]	{line++;}
-
+{lnote}[^{lnote}{rnote}]*{rnote}	{printf("***********note************\n");
+										char* c = yytext;
+										while(*c!='\0'){
+											if(*c=='\n'){
+												line++;
+											}
+											c++;
+										}
+									}
 "+"     {return PLUS;}
 "-"     {return MINUS;}
 "*"     {return TIMES;}
