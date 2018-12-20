@@ -16,6 +16,8 @@ int array;
 struct list* array_size;
 int array_dim;
 char id[AL];
+int error_count;
+extern int line;
 struct list{
     int v;
     struct list *next;
@@ -27,6 +29,10 @@ enum type_e type;
 
 void error(int);
 
+void syntax_error(char* s){
+    error_count++;
+    printf("syntax error in line %d: %s\n", line+1, s);
+}
 struct table1{
 	char name[AL];
 	enum object kind;
@@ -51,11 +57,73 @@ int array_len(struct list* head)
 		len=0;
 	}else{
 		do{
-			len+=each->v;
+			len*=each->v;
 			each = each->next;
 		}while(each!=NULL);
 	}
 	return len;
+}
+int list_get_last(struct list* head)
+{
+	if(head==NULL){
+		syntax_error("array is empty!");
+		return -1;
+	}
+	struct list* each = head;
+	while(each->next!=NULL)
+		each = each->next;
+	return each->v;
+
+}
+int list_del_last(struct list* head)
+{
+	if(head==NULL){
+		return 0;
+	}
+	struct list* each = head;
+	struct list* befor=head;
+	while(each->next!=NULL){
+		befor=each;
+		each = each->next;
+	}
+	befor->next=NULL;
+	free(each);
+	each=NULL;
+	return 0;
+
+}
+int list_get_product_after_id(struct list* head, int id)
+{
+	printf("list_get_product_after_id:%d\n", id);
+	int p=1,i=0;
+	struct list* each = head;
+	if(head==NULL){
+		return 0;
+	}
+	while(each!=NULL){
+		if(i++>id)
+			p*=each->v;
+		each = each->next;
+	}
+	return p;
+}
+int list_get_by_id(struct list* head, int id)
+{
+	int i;
+	struct list* each = head;
+	for(i=0;i<id;i++)
+	{
+		if(each==NULL){
+			syntax_error("array index out of range!");
+			return -1;
+		}
+		each = each->next;
+	}
+	if(each==NULL){
+		syntax_error("array index out of range!");
+		return -1;
+	}
+	return each->v;
 }
 char* list_prints(struct list* head, char *s){
 	struct list* each = head;
@@ -126,7 +194,7 @@ void enter(enum object k){
 int position(char id[10])
 {
 	int i;
-	strcpy(table[0].name,id);
+	//strcpy(table[0].name,id);
 	i=tx;
 	while(strcmp(table[i].name,id)!=0)
 		i--;
@@ -168,11 +236,9 @@ void printTable(int tofile)
 				strcpy(type, "none");
 				break;
 		}
-		if(table[i].array)
-		{
-			array_size0 = table[i].array_size->v;
-		}
-		printf("%15s%15s%15d%15s%15d%15d%15d%15d%15d\n", table[i].name, kind, table[i].val, type, table[i].adr, table[i].size, table[i].array, table[i].array_dim, array_size0);
+		char ss[50];
+		list_prints(table[i].array_size,ss);
+		printf("%15s%15s%15d%15s%15d%15d%15d%15d%15s\n", table[i].name, kind, table[i].val, type, table[i].adr, table[i].size, table[i].array, table[i].array_dim, ss);
 	}
 	printf("****************************************************************************************************************************************************\n");
 }

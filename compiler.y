@@ -31,8 +31,7 @@ void syntax_error(char* s);
 int yylex(void);
 FILE *yout;
 FILE *yyin;
-int error_count;
-
+struct list* array_ids;
 %}
 
 %union{
@@ -68,10 +67,9 @@ program:
     ;
 
 declaration_list:
-     declaration_list declaration_stat {}
-     |declaration_stat  {
-                            procReg.dx0=dx;
-                        }
+     declaration_list declaration_stat  {
+                                            procReg.dx0=dx;
+                                        }
      | {}
      ;
 
@@ -121,6 +119,9 @@ var:
                 error(0);
             }
             $$ = i;
+            if(table[i].array){
+                array_ids = list_add(array_ids,i);
+            }
         }
     /*
     | ID LBRACKETS expression RBRACKETS     {
@@ -131,7 +132,7 @@ var:
 
 statement_list:
     statement_list statement {}
-    |
+    |statement {}
     ;
 
 statement:
@@ -192,15 +193,29 @@ write_stat:
     ;
 
 array_loc:
-    LBRACKETS expression RBRACKETS          {
-                                                $$=1;   
-                                            }
+    array_loc LBRACKETS expression RBRACKETS        {
+                                                        int id=list_get_last(array_ids);
+                                                        int dim_id=$1;
+                                                        $$=dim_id+1;  
+                                                        if(dim_id+1>table[id].array_dim){
+                                                            char s[50];
+                                                            sprintf(s,"dimension of array %s is %d, gived %d.", table[id].name, table[id].array_dim, dim_id);
+                                                            syntax_error(s);
+                                                        }
+                                                        int p=list_get_product_after_id(table[id].array_size, dim_id);
+                                                        gen(lit,0,p);
+                                                        gen(opr,0,4);
+                                                        if(dim_id>=1){
+                                                            gen(opr,0,2);
+                                                        }
+
+                                                    }
     |   {$$=0;}
     ;
 
 read_stat:
     READ var array_loc SEMICOLON    {
-                                        if($3==1){
+                                        if($3>=1){
                                             gen(lit,0,table[$2].adr);
                                             gen(opr,0,2);
                                             gen(opr,0,16);
@@ -224,19 +239,19 @@ expression_stat:
 
 expression:
     var array_loc   {
-                        if($2==1){
+                        if($2>=1){
                             gen(lit,0,table[$1].adr);
                             gen(opr,0,2);
                         }
                     }
-                    BECOMES expression    {
-                                            if($2==1){
-                                                gen(sto,0,0);
-                                            }else{
-                                                gen(sto,0,table[$1].adr);
-                                                gen(lod,0,table[$1].adr);
-                                            }
-                                        }
+    BECOMES expression    {
+                            if($2>=1){
+                                gen(sto,0,0);
+                            }else{
+                                gen(sto,0,table[$1].adr);
+                                gen(lod,0,table[$1].adr);
+                            }
+                        }
     | simple_expr {}
     ;
 
@@ -288,11 +303,12 @@ term:
 factor:
     LPAREN expression RPAREN {}
     |var  array_loc {
-                        if($2==1){
+                        if($2>=1){
                             if(table[$1].kind==variable){
                                 gen(lit,0,table[$1].adr);
                                 gen(opr,0,2);
                                 gen(lod,0,0);
+                                list_del_last(array_ids);
                             }else{
                                 error(0);
                             }
@@ -349,10 +365,6 @@ void yyerror(char *s){
     fprintf(fa1,"%s in line %d\n",s,line);
 }
 
-void syntax_error(char* s){
-    error_count++;
-    printf("syntax error in line %d: %s\n", line+1, s);
-}
 int main(int argc,char *argv[])
 {
     int i;

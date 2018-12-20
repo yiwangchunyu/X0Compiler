@@ -1,4 +1,8 @@
 main
 {
-int a[5];
+int a[2][5];
+int b;
+a[1][3]=9;
+b=a[1][3];
+write b;
 }

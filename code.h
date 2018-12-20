@@ -24,7 +24,6 @@ struct instruction{
 
 struct instruction code[CXMAX+1];
 
-extern int line;
 
 void error(int n){
 	printf("***");
