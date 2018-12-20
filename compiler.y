@@ -1,7 +1,7 @@
 %token  <ident> ID 
 %token  <number> NUM
 %token  <type>  INT CHAR 
-%token  PLUS MINUS TIMES SLASH EQL NEQ LES LEQ GTR GEQ MOD XOR ODD
+%token  PLUS MINUS TIMES SLASH EQL NEQ LES LEQ GTR GEQ MOD XOR ODD SPLUS SMINUS UMINUS
 %token  LPAREN RPAREN LBRACKETS RBRACKETS LBRACE RBRACE 
 %token  COMMA SEMICOLON PERIOD BECOMES 
 %token  MAIN IF ELSE WHILE WRITE READ DO CALL
@@ -13,10 +13,11 @@
 %type <number> array_loc
 %type <type> type
 
+%right   ODD
+%left    XOR
 %left    PLUS MINUS
 %left    TIMES SLASH MOD
-%left    XOR
-%right   ODD
+%left    SPLUS SMINUS UMINUS
 %nonassoc ELSE
 
 
@@ -343,6 +344,42 @@ factor:
                                 }
                     }
             }
+    |var SPLUS  {
+                    if(table[$1].array==0){
+                        gen(lod,0,table[$1].adr);
+                        gen(lod,0,table[$1].adr);
+                        gen(lit,0,1);
+                        gen(opr,0,2);
+                        gen(sto,0,table[$1].adr);
+                    }
+                }
+    |var SMINUS {
+                    if(table[$1].array==0){
+                        gen(lod,0,table[$1].adr);
+                        gen(lod,0,table[$1].adr);
+                        gen(lit,0,1);
+                        gen(opr,0,3);
+                        gen(sto,0,table[$1].adr);
+                    }
+                }
+    |SPLUS var  {
+                    if(table[$2].array==0){
+                        gen(lod,0,table[$2].adr);
+                        gen(lit,0,1);
+                        gen(opr,0,2);
+                        gen(sto,0,table[$2].adr);
+                        gen(lod,0,table[$2].adr);
+                    }
+                }
+    |SMINUS var {
+                    if(table[$2].array==0){
+                        gen(lod,0,table[$2].adr);
+                        gen(lit,0,1);
+                        gen(opr,0,3);
+                        gen(sto,0,table[$2].adr);
+                        gen(lod,0,table[$2].adr);
+                    }
+                }
     |NUM    {
                 int num;
                 num=$1;
@@ -355,6 +392,7 @@ factor:
                 gen(lit,0,num);
             }
     ;
+
 /*
 get_table_addr:
                {

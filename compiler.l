@@ -37,6 +37,9 @@ rnote		"*/"
 "%"     {return MOD;}
 "^"     {return XOR;}
 
+"++"		{return SPLUS;}
+"--"		{return SMINUS;}
+
 "=="       {return EQL;}
 "!="       {return NEQ;}
 "<"       {return LES;}
