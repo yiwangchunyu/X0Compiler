@@ -63,6 +63,7 @@ rnote		"*/"
 "case"		{return CASE;}
 "default"	{return DEFAULT;}
 "break"		{return BREAK;}
+"continue"	{return CONTINUE;}
 "main"     {return MAIN;}
 "if"     {return IF;}
 "else"   {return ELSE;}

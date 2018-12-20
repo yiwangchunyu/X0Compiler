@@ -4,7 +4,7 @@
 %token  PLUS MINUS TIMES SLASH EQL NEQ LES LEQ GTR GEQ MOD XOR ODD SPLUS SMINUS UMINUS
 %token  LPAREN RPAREN LBRACKETS RBRACKETS LBRACE RBRACE 
 %token  COMMA SEMICOLON PERIOD BECOMES COLON
-%token  MAIN IF ELSE WHILE WRITE READ DO CALL SWITCH CASE DEFAULT BREAK FOR REPEAT UNTIL
+%token  MAIN IF ELSE WHILE WRITE READ DO CALL SWITCH CASE DEFAULT BREAK CONTINUE FOR REPEAT UNTIL
 
 %type <number> var
 %type <number> get_code_addr
@@ -35,6 +35,8 @@ int yylex(void);
 FILE *yout;
 FILE *yyin;
 struct list* array_ids;
+struct list* break_to_cxs;
+struct list* continue_to_cxs;
 %}
 
 %union{
@@ -149,6 +151,20 @@ statement:
     |for_stat {}
     |do_while_stat {}
     |repeat_until_stat {}
+    |break_stat {}
+    |continue_stat {}
+    ;
+
+break_stat:
+    BREAK SEMICOLON {
+        printf("list_add******************\n");
+                /*break_to_cxs = list_add(break_to_cxs,cx);
+                gen(jmp,0,0);*/
+            }
+    ;
+
+continue_stat:
+    CONTINUE SEMICOLON{}
     ;
 
 for_stat:
@@ -161,6 +177,9 @@ for_stat:
                 }
     RPAREN get_code_addr for_stat_list  {
                                             gen(jmp,0,$8+2);
+                                            /*int break_cx = list_get_last(break_to_cxs);
+                                            list_del_last(break_to_cxs);
+                                            code[break_cx].a=cx;*/
                                             code[$8].a=cx;
                                             code[$8+1].a=$13;
                                         }
