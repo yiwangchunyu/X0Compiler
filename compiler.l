@@ -54,6 +54,7 @@ rnote		"*/"
 "."    {return PERIOD;}
 "="   {return BECOMES;}
 
+"odd"|"ODD"	{return ODD;}
 "main"     {return MAIN;}
 "if"     {return IF;}
 "else"   {return ELSE;}

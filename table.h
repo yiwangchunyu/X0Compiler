@@ -94,7 +94,6 @@ int list_del_last(struct list* head)
 }
 int list_get_product_after_id(struct list* head, int id)
 {
-	printf("list_get_product_after_id:%d\n", id);
 	int p=1,i=0;
 	struct list* each = head;
 	if(head==NULL){

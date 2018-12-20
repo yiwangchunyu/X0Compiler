@@ -1,7 +1,7 @@
 %token  <ident> ID 
 %token  <number> NUM
 %token  <type>  INT CHAR 
-%token  PLUS MINUS TIMES SLASH EQL NEQ LES LEQ GTR GEQ MOD XOR
+%token  PLUS MINUS TIMES SLASH EQL NEQ LES LEQ GTR GEQ MOD XOR ODD
 %token  LPAREN RPAREN LBRACKETS RBRACKETS LBRACE RBRACE 
 %token  COMMA SEMICOLON PERIOD BECOMES 
 %token  MAIN IF ELSE WHILE WRITE READ DO CALL
@@ -16,6 +16,7 @@
 %left    PLUS MINUS
 %left    TIMES SLASH MOD
 %left    XOR
+%right   ODD
 %nonassoc ELSE
 
 
@@ -304,6 +305,9 @@ term:
                         }
     |term XOR factor    {
                             gen(opr,0,21);
+                        }
+    |ODD factor         {
+                            gen(opr,0,6);
                         }
     ;
 
