@@ -33,6 +33,10 @@ rnote		"*/"
 "-"     {return MINUS;}
 "*"     {return TIMES;}
 "/"     {return SLASH;}
+
+"%"     {return MOD;}
+"^"     {return XOR;}
+
 "=="       {return EQL;}
 "!="       {return NEQ;}
 "<"       {return LES;}

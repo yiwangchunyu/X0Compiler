@@ -195,6 +195,14 @@ void interpret()
 						fprintf(fa2,"%c",s[s[t]]);
 						t=t-1;
 						break;
+					case 20:	/*MOD*/
+						t=t-1;
+						s[t]=s[t]%s[t+1];
+						break;
+					case 21:	/*xor*/
+						t=t-1;
+						s[t]=s[t]^s[t+1];
+						break;
 				}
 				break;	
 			case lod:

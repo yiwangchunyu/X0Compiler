@@ -1,7 +1,7 @@
 %token  <ident> ID 
 %token  <number> NUM
 %token  <type>  INT CHAR 
-%token  PLUS MINUS TIMES SLASH EQL NEQ LES LEQ GTR GEQ 
+%token  PLUS MINUS TIMES SLASH EQL NEQ LES LEQ GTR GEQ MOD XOR
 %token  LPAREN RPAREN LBRACKETS RBRACKETS LBRACE RBRACE 
 %token  COMMA SEMICOLON PERIOD BECOMES 
 %token  MAIN IF ELSE WHILE WRITE READ DO CALL
@@ -14,7 +14,8 @@
 %type <type> type
 
 %left    PLUS MINUS
-%left    TIMES SLASH
+%left    TIMES SLASH MOD
+%left    XOR
 %nonassoc ELSE
 
 
@@ -297,6 +298,12 @@ term:
                         }
     |term SLASH factor  {
                             gen(opr,0,5);
+                        }
+    |term MOD factor    {
+                            gen(opr,0,20);
+                        }
+    |term XOR factor    {
+                            gen(opr,0,21);
                         }
     ;
 
