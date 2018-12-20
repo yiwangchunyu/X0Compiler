@@ -4,7 +4,7 @@
 %token  PLUS MINUS TIMES SLASH EQL NEQ LES LEQ GTR GEQ MOD XOR ODD SPLUS SMINUS UMINUS
 %token  LPAREN RPAREN LBRACKETS RBRACKETS LBRACE RBRACE 
 %token  COMMA SEMICOLON PERIOD BECOMES COLON
-%token  MAIN IF ELSE WHILE WRITE READ DO CALL SWITCH CASE DEFAULT BREAK FOR
+%token  MAIN IF ELSE WHILE WRITE READ DO CALL SWITCH CASE DEFAULT BREAK FOR REPEAT UNTIL
 
 %type <number> var
 %type <number> get_code_addr
@@ -148,6 +148,7 @@ statement:
     /*|switch_case_stat {}*/
     |for_stat {}
     |do_while_stat {}
+    |repeat_until_stat {}
     ;
 
 for_stat:
@@ -170,6 +171,12 @@ do_while_stat:
                                                                                                                 gen(jpc,0,$11+2);
                                                                                                                 gen(jmp,0,$3);
                                                                                                             }
+    ;
+
+repeat_until_stat:
+    REPEAT LBRACE get_code_addr statement_list RBRACE UNTIL LPAREN simple_expr RPAREN SEMICOLON     {
+                                                                                                        gen(jpc,0,$3);
+                                                                                                    }
     ;
 /*switch_case_stat:
     SWITCH LPAREN expression RPAREN LBRACE case_list default_stat RBRACE {}

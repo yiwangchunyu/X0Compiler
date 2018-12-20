@@ -69,6 +69,8 @@ rnote		"*/"
 "while"  {return WHILE;}
 "for"		{return FOR;}
 "do"		{return DO;}
+"repeat"	{return REPEAT;}
+"until"		{return UNTIL;}
 "write"  {return WRITE;}
 "read"   {return READ;}
 "call"   {return CALL;}
