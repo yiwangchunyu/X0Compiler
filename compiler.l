@@ -54,14 +54,20 @@ rnote		"*/"
 "}"    {return RBRACE;}
 ","     {return COMMA;}
 ";" {return SEMICOLON;}
+":"		{return COLON;}
 "."    {return PERIOD;}
 "="   {return BECOMES;}
 
 "odd"|"ODD"	{return ODD;}
+"switch"	{return SWITCH;}
+"case"		{return CASE;}
+"default"	{return DEFAULT;}
+"break"		{return BREAK;}
 "main"     {return MAIN;}
 "if"     {return IF;}
 "else"   {return ELSE;}
 "while"  {return WHILE;}
+"for"		{return FOR;}
 "write"  {return WRITE;}
 "read"   {return READ;}
 "do"     {return DO;}

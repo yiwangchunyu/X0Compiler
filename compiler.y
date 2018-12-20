@@ -3,8 +3,8 @@
 %token  <type>  INT CHAR 
 %token  PLUS MINUS TIMES SLASH EQL NEQ LES LEQ GTR GEQ MOD XOR ODD SPLUS SMINUS UMINUS
 %token  LPAREN RPAREN LBRACKETS RBRACKETS LBRACE RBRACE 
-%token  COMMA SEMICOLON PERIOD BECOMES 
-%token  MAIN IF ELSE WHILE WRITE READ DO CALL
+%token  COMMA SEMICOLON PERIOD BECOMES COLON
+%token  MAIN IF ELSE WHILE WRITE READ DO CALL SWITCH CASE DEFAULT BREAK FOR
 
 %type <number> var
 %type <number> get_code_addr
@@ -145,8 +145,37 @@ statement:
     |write_stat {}
     |compound_stat {}
     |expression_stat {}
+    /*|switch_case_stat {}*/
+    |for_stat {}
     ;
 
+for_stat:
+    FOR LPAREN expression SEMICOLON get_code_addr simple_expr SEMICOLON get_code_addr   {
+                                                                                            gen(jpc,0,0);
+                                                                                            gen(jmp,0,0);
+                                                                                        }
+    expression  {
+                    gen(jmp,0,$5);
+                }
+    RPAREN LBRACE get_code_addr statement_list RBRACE   {
+                                                            gen(jmp,0,$8+2);
+                                                            code[$8].a=cx;
+                                                            code[$8+1].a=$14;
+                                                        }
+    ;
+
+/*switch_case_stat:
+    SWITCH LPAREN expression RPAREN LBRACE case_list default_stat RBRACE {}
+    ;
+
+case_list:
+    case_list CASE expression COLON statement_list {}
+    ;
+
+default_stat:
+    DEFAULT COLON statement_list {}
+    ;
+*/
 if_stat:
     IF LPAREN expression RPAREN get_code_addr   {
                                                     gen(jpc, 0, 0);
@@ -280,6 +309,28 @@ simple_expr:
                                         }
     ;
 
+/*
+condition:
+    additive_expr GTR additive_expr     {
+                                            gen(opr,0,12);
+                                        }
+    | additive_expr LES additive_expr   {
+                                            gen(opr,0,10);
+                                        }
+    | additive_expr GEQ additive_expr   {
+                                            gen(opr,0,11);
+                                        }
+    | additive_expr LEQ additive_expr   {
+                                            gen(opr,0,13);
+                                        }
+    | additive_expr EQL additive_expr   {
+                                            gen(opr,0,8);
+                                        }
+    | additive_expr NEQ additive_expr   {
+                                            gen(opr,0,9);
+                                        }
+    ;
+*/
 
 additive_expr:
     term  {}
