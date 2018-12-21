@@ -1,6 +1,6 @@
 %token  <ident> ID 
 %token  <number> NUM
-%token  <type>  INT CHAR  BOOL
+%token  <type>  INT CHAR  BOOL CONST TRUE FALSE
 %token  PLUS MINUS TIMES SLASH EQL NEQ LES LEQ GTR GEQ MOD XOR ODD SPLUS SMINUS UMINUS AND OR NOT
 %token  LPAREN RPAREN LBRACKETS RBRACKETS LBRACE RBRACE 
 %token  COMMA SEMICOLON PERIOD BECOMES COLON
@@ -60,6 +60,7 @@ program:
                         table[tx].adr=cx;
                         gen(jmp,0,1);
                     }
+    const_list      {}
     declaration_list    {
                             code[table[procReg.tx0].adr].a=cx;
                             strcpy(table[procReg.tx0].name,"main");
@@ -74,6 +75,38 @@ program:
                             gen(opr,0,0);
                         } 
     RBRACE {printf("main over");}
+    ;
+
+const_list:
+    const_list const_dec {}
+    |
+    ;
+
+const_dec:
+    CONST INT ID BECOMES NUM  SEMICOLON     {
+                                                type=int_t;
+                                                strcpy(id,$3);
+                                                num=$5;
+                                                enter(constant);
+                                            } 
+    |CONST CHAR ID BECOMES NUM  SEMICOLON   {
+                                                type=char_t;
+                                                strcpy(id,$3);
+                                                num=$5;
+                                                enter(constant);
+                                            } 
+    |CONST BOOL ID BECOMES TRUE SEMICOLON   {
+                                                type=bool_t;
+                                                strcpy(id,$3);
+                                                num=1;
+                                                enter(constant);
+                                            }  
+    |CONST BOOL ID BECOMES FALSE SEMICOLON  {
+                                                type=bool_t;
+                                                strcpy(id,$3);
+                                                num=0;
+                                                enter(constant);
+                                            } 
     ;
 
 declaration_list:
@@ -128,8 +161,8 @@ type:
 var:
     ID  {
             int i = position ($1);
-            if(i==0){
-                error(0);
+            if(i<=0){
+                syntax_error("variable undefined!");
             }
             $$ = i;
             if(table[i].array){
@@ -283,7 +316,11 @@ write_stat:
                                     gen(opr,0,14);
                                 }
     |WRITE var SEMICOLON        {
-                                    gen(lod,0,table[$2].adr);
+                                    if(table[$2].kind==constant){
+                                        gen(lit,0,table[$2].val);
+                                    }else if(table[$2].kind==variable){
+                                        gen(lod,0,table[$2].adr);
+                                    }
                                     if(table[$2].type==char_t)
                                         gen(opr,0,17);
                                     else if(table[$2].type==int_t)
@@ -291,8 +328,7 @@ write_stat:
                                     else if(table[$2].type==bool_t)
                                         gen(opr,0,25);
                                     else
-                                        error(0);
-                                                
+                                        error(0); 
                                 }   
     ;
 
@@ -319,16 +355,19 @@ array_loc:
 
 read_stat:
     READ var array_loc SEMICOLON    {
-                                        if($3>=1){
-                                            gen(lit,0,table[$2].adr);
-                                            gen(opr,0,2);
-                                            gen(opr,0,16);
-                                            gen(sto,0,0);
+                                        if(table[$2].kind==constant){
+                                            syntax_error("constant cannot be read.");
                                         }else{
-                                            gen(opr,0,16);
-                                            gen(sto,0,table[$2].adr);
+                                            if($3>=1){
+                                                gen(lit,0,table[$2].adr);
+                                                gen(opr,0,2);
+                                                gen(opr,0,16);
+                                                gen(sto,0,0);
+                                            }else{
+                                                gen(opr,0,16);
+                                                gen(sto,0,table[$2].adr);
+                                            }
                                         }
-                            
                                     }
     ;
 
@@ -343,9 +382,13 @@ expression_stat:
 
 expression:
     var array_loc   {
-                        if($2>=1){
-                            gen(lit,0,table[$1].adr);
-                            gen(opr,0,2);
+                        if(table[$2].kind==constant){
+                            syntax_error("constant cannot be writen.");
+                        }else{
+                            if($2>=1){
+                                gen(lit,0,table[$1].adr);
+                                gen(opr,0,2);
+                            }
                         }
                     }
     BECOMES expression    {
@@ -447,34 +490,38 @@ term:
 factor:
     LPAREN expression RPAREN {}
     |var  array_loc {
-                        if($2>=1){
-                            if(table[$1].kind==variable){
-                                gen(lit,0,table[$1].adr);
-                                gen(opr,0,2);
-                                gen(lod,0,0);
-                                list_del_last(array_ids);
-                            }else{
-                                error(0);
-                            }
+                        if(table[$2].kind==constant){
+                            gen(lit,0,table[$1].val);
                         }else{
-                            switch(table[$1].kind){
-                                case constant:
-                                    gen(lit,0,table[$1].val);
-                                    break;
-                                case variable:
-                                    if (table[$1].array)
-                                    {
-                                        gen(lod,0,table[$1].adr+0);
-                                    }else
-                                    {
-                                        gen(lod,0,table[$1].adr);
-                                    }
-                                    break;
-                                case procedur:
-                                    error(21);
-                                    break;
+                            if($2>=1){
+                                if(table[$1].kind==variable){
+                                    gen(lit,0,table[$1].adr);
+                                    gen(opr,0,2);
+                                    gen(lod,0,0);
+                                    list_del_last(array_ids);
+                                }else{
+                                    error(0);
                                 }
-                    }
+                            }else{
+                                switch(table[$1].kind){
+                                    case constant:
+                                        gen(lit,0,table[$1].val);
+                                        break;
+                                    case variable:
+                                        if (table[$1].array)
+                                        {
+                                            gen(lod,0,table[$1].adr+0);
+                                        }else
+                                        {
+                                            gen(lod,0,table[$1].adr);
+                                        }
+                                        break;
+                                    case procedur:
+                                        error(21);
+                                        break;
+                                    }
+                            }
+                        }
             }
     |var SPLUS  {
                     if(table[$1].array==0){
@@ -586,7 +633,7 @@ int main(int argc,char *argv[])
             }
         }
     }
-    printf("pl0 compiler\n");
+    printf("x0 compiler\n");
     if((fa1=fopen("fa1.txt","w"))==NULL){
         printf("Cann't open file!\n");
         exit(0);

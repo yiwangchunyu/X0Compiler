@@ -32,6 +32,7 @@ void error(int);
 void syntax_error(char* s){
     error_count++;
     printf("syntax error in line %d: %s\n", line+1, s);
+    exit(1);
 }
 struct table1{
 	char name[AL];
@@ -169,6 +170,7 @@ void enter(enum object k){
 				num=0;
 				}
 			table[tx].val=num;
+			table[tx].type=type;
 			break;
 			
 		case variable:		
@@ -195,8 +197,11 @@ int position(char id[10])
 	int i;
 	//strcpy(table[0].name,id);
 	i=tx;
-	while(strcmp(table[i].name,id)!=0)
+	while(strcmp(table[i].name,id)!=0){
 		i--;
+		if(i==0)
+			break;
+	}
 	return i;
 }
 

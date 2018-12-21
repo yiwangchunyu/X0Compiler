@@ -65,6 +65,9 @@ rnote		"*/"
 "break"		{return BREAK;}
 "continue"	{return CONTINUE;}
 "main"     {return MAIN;}
+"const"		{return CONST;}
+"true"		{return TRUE;}
+"false"		{return FALSE;}
 "if"     {return IF;}
 "else"   {return ELSE;}
 "while"  {return WHILE;}
