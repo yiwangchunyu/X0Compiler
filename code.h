@@ -1,11 +1,12 @@
 #include "table.h"
 #define CXMAX 200
+#define LOOPMAX 50
 
 int cx,cx1,cx2;
 int err;
 
 enum fct{lit,opr,lod,sto,cal,ini,jmp,jpc,ext};
-
+enum inloop{brk,ctn};
 char *mnemonic[9]={"lit","opr","lod","sto","cal","ini","jmp","jpc", "ext"};
 
 FILE *fa;
@@ -21,9 +22,16 @@ struct instruction{
 	int l;
 	int a;
 };
-
 struct instruction code[CXMAX+1];
 
+struct loop{
+	int cx;
+	enum inloop type;
+	int level;
+};
+struct loop loopReg[LOOPMAX];
+int loop_pos=0;
+int loop_level=0;
 
 void error(int n){
 	printf("***");

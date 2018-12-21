@@ -40,8 +40,6 @@ int yylex(void);
 FILE *yout;
 FILE *yyin;
 struct list* array_ids;
-struct list* break_to_cxs;
-struct list* continue_to_cxs;
 %}
 
 %union{
@@ -193,38 +191,72 @@ statement:
     |do_while_stat {}
     |repeat_until_stat {}
     |exit_stat {}
+    |break_stat {}
+    |continue_stat {}
     ;
 
 exit_stat:
     EXIT SEMICOLON {gen(ext,0,0);}
     ;
 
-/*
 break_stat:
     BREAK SEMICOLON {
-        printf("list_add******************\n");
-                break_to_cxs = list_add(break_to_cxs,cx);
-                gen(jmp,0,0);
-            }
+                        loop_pos++;
+                        if(loop_pos>=LOOPMAX){
+                            syntax_error("too many breaks or continues.");
+                        }
+                        loopReg[loop_pos].cx=cx;
+                        loopReg[loop_pos].type=brk;
+                        loopReg[loop_pos].level=loop_level;
+                        gen(jmp,0,0);
+                    }
     ;
 
 continue_stat:
-    CONTINUE SEMICOLON{}
+    CONTINUE SEMICOLON      {
+                                loop_pos++;
+                                if(loop_pos>=LOOPMAX){
+                                    syntax_error("too many breaks or continues.");
+                                }
+                                loopReg[loop_pos].cx=cx;
+                                loopReg[loop_pos].type=ctn;
+                                loopReg[loop_pos].level=loop_level;
+                                gen(jmp,0,0);
+                            }
     ;
-*/
 
 for_stat:
     FOR LPAREN for_exp1 SEMICOLON get_code_addr for_exp2 SEMICOLON get_code_addr    {
+                                                                                            if(loop_level==0){
+                                                                                                loop_pos=-1;
+                                                                                            }
+                                                                                            loop_level++;
                                                                                             gen(jpc,0,0);
                                                                                             gen(jmp,0,0);
                                                                                     }
     for_exp3    {
                     gen(jmp,0,$5);
                 }
-    RPAREN get_code_addr loop_stat_list  {
+    RPAREN get_code_addr loop_stat_list {
                                             gen(jmp,0,$8+2);
                                             code[$8].a=cx;
                                             code[$8+1].a=$13;
+                                            int i;
+                                            for(i=0;i<=loop_pos;i++)
+                                            {
+                                                if(loopReg[i].level==loop_level){
+                                                    switch(loopReg[i].type){
+                                                        case brk:
+                                                            code[loopReg[i].cx].a=cx;
+                                                            break;
+                                                        case ctn:
+                                                            code[loopReg[i].cx].a=$8+2;
+                                                            break;
+                                                    }
+                                                }
+                                            }
+                                            loop_level--;
+
                                         }
     ;
 
@@ -248,10 +280,33 @@ loop_stat_list:
     ;
 
 do_while_stat:
-    DO get_code_addr do_while_stat_list WHILE LPAREN simple_expr RPAREN SEMICOLON get_code_addr   {
-                                                                                                                gen(jpc,0,$9+2);
-                                                                                                                gen(jmp,0,$2);
-                                                                                                            }
+    DO  get_code_addr   {
+                            if(loop_level==0)
+                            {
+                                loop_pos=-1;
+                            }
+                            loop_level++;
+                        } 
+    do_while_stat_list WHILE get_code_addr LPAREN simple_expr RPAREN SEMICOLON get_code_addr   {
+                                                                                                                    gen(jpc,0,$11+2);
+                                                                                                                    gen(jmp,0,$2);
+
+                                                                                                                    int i;
+                                                                                                                    for(i=0;i<=loop_pos;i++)
+                                                                                                                    {
+                                                                                                                        if(loopReg[i].level==loop_level){
+                                                                                                                            switch(loopReg[i].type){
+                                                                                                                                case brk:
+                                                                                                                                    code[loopReg[i].cx].a=cx;
+                                                                                                                                    break;
+                                                                                                                                case ctn:
+                                                                                                                                    code[loopReg[i].cx].a=$6;
+                                                                                                                                    break;
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                    loop_level--;
+                                                                                                                }
     ;
 
 do_while_stat_list:
@@ -259,9 +314,33 @@ do_while_stat_list:
     ;
 
 repeat_until_stat:
-    REPEAT get_code_addr repeat_until_stat_list UNTIL LPAREN simple_expr RPAREN SEMICOLON   {
-                                                                                                gen(jpc,0,$2);
-                                                                                            }
+    REPEAT  get_code_addr   {
+                                if(loop_level==0)
+                                {
+                                    loop_pos=-1;
+                                }
+                                loop_level++;
+                            }
+    repeat_until_stat_list UNTIL get_code_addr LPAREN simple_expr RPAREN SEMICOLON     {
+                                                                                                                gen(jpc,0,$2);
+
+                                                                                                                int i;
+                                                                                                                for(i=0;i<=loop_pos;i++)
+                                                                                                                {
+                                                                                                                    if(loopReg[i].level==loop_level){
+                                                                                                                        switch(loopReg[i].type){
+                                                                                                                            case brk:
+                                                                                                                                code[loopReg[i].cx].a=cx;
+                                                                                                                                break;
+                                                                                                                            case ctn:
+                                                                                                                                code[loopReg[i].cx].a=$6;
+                                                                                                                                break;
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }
+                                                                                                                loop_level--;
+
+                                                                                                            }
     ;
 
 repeat_until_stat_list:
@@ -302,12 +381,35 @@ else_stat:
     ;
 
 while_stat:
-    WHILE get_code_addr LPAREN expression RPAREN get_code_addr  {
-                                                                    gen(jpc, 0 , 0);
-                                                                }
+    WHILE   get_code_addr   {
+                                if(loop_level==0)
+                                {
+                                    loop_pos=-1;
+                                }
+                                loop_level++;
+                            } 
+    LPAREN expression RPAREN get_code_addr  {
+                                                gen(jpc, 0 , 0);
+                                            }
     statement   {
                     gen(jmp, 0, $2);
-                    code[$6].a = cx;
+                    code[$7].a = cx;
+
+                    int i;
+                    for(i=0;i<=loop_pos;i++)
+                    {
+                        if(loopReg[i].level==loop_level){
+                            switch(loopReg[i].type){
+                                case brk:
+                                    code[loopReg[i].cx].a=cx;
+                                    break;
+                                case ctn:
+                                    code[loopReg[i].cx].a=$2;
+                                    break;
+                            }
+                        }
+                    }
+                    loop_level--;
                 }
     ;
 
@@ -425,10 +527,10 @@ simple_expr:
     | additive_expr AND additive_expr   {
                                             gen(opr,0,22);
                                         }
-    | additive_expr OR additive_expr   {
+    | additive_expr OR additive_expr    {
                                             gen(opr,0,23);
                                         }
-    |NOT additive_expr   {
+    |NOT additive_expr                  {
                                             gen(opr,0,24);
                                         }                                    
     ;
