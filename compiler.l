@@ -84,6 +84,12 @@ rnote		"*/"
 				strcpy(yylval.type,yytext);
 				return INT;
 			}
+"double"    {	
+				yylval.type = (char *)malloc(strlen(yytext)+1);
+				strcpy(yylval.type,yytext);
+				return DOUBLE;
+			}
+
 "char"      {	
 				yylval.type = (char *)malloc(strlen(yytext)+1);
 				strcpy(yylval.type,yytext);
@@ -97,6 +103,11 @@ rnote		"*/"
 "and"		{return AND;}
 "or"		{return OR;}
 "not"		{return NOT;}
+
+[0-9]+[.][0-9]+		{
+						yylval.number_d=atof(yytext);
+						return NUM_D;
+					}
 
 '[^'\n]'			{
 							yylval.number=(int)(yytext[1]);
@@ -123,6 +134,5 @@ rnote		"*/"
 
 int yywrap(void) 
 {
-    printf("\nlex done!\n"); 
     return 1; 
 }

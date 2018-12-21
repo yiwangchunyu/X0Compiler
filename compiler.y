@@ -1,6 +1,7 @@
 %token  <ident> ID 
 %token  <number> NUM
-%token  <type>  INT CHAR  BOOL CONST TRUE FALSE
+%token  <number_d> NUM_D
+%token  <type>  INT CHAR DOUBLE BOOL CONST TRUE FALSE
 %token  PLUS MINUS TIMES SLASH EQL NEQ LES LEQ GTR GEQ MOD XOR ODD SPLUS SMINUS UMINUS AND OR NOT
 %token  LPAREN RPAREN LBRACKETS RBRACKETS LBRACE RBRACE 
 %token  COMMA SEMICOLON PERIOD BECOMES COLON
@@ -45,6 +46,7 @@ struct list* array_ids;
 %union{
 char *ident;
 int number;
+double number_d;
 void* ptr;
 char *type;
 struct databus* db;
@@ -72,7 +74,7 @@ program:
     statement_list      {
                             gen(opr,0,0);
                         } 
-    RBRACE {printf("main over");}
+    RBRACE {}
     ;
 
 const_list:
@@ -87,6 +89,12 @@ const_dec:
                                                 num=$5;
                                                 enter(constant);
                                             } 
+    |CONST DOUBLE ID BECOMES NUM_D  SEMICOLON   {
+                                                    type=double_tt;
+                                                    strcpy(id,$3);
+                                                    num_d=$5;
+                                                    enter(constant);
+                                                } 
     |CONST CHAR ID BECOMES NUM  SEMICOLON   {
                                                 type=char_t;
                                                 strcpy(id,$3);
@@ -122,6 +130,8 @@ declaration_stat:
                                             type=char_t;
                                         }else if(strcmp($1,"bool")==0){
                                             type=bool_t;
+                                        }else if(strcmp($1,"double")==0){
+                                            type=double_tt;
                                         } else{
                                             type=none_t;
                                         }
@@ -152,6 +162,7 @@ array_size:
     ;
 type:
     INT {$$=$1;}
+    |DOUBLE {$$=$1;}
     |CHAR {$$=$1;}
     |BOOL {$$=$1;}
     ;
@@ -419,7 +430,11 @@ write_stat:
                                 }
     |WRITE var SEMICOLON        {
                                     if(table[$2].kind==constant){
-                                        gen(lit,0,table[$2].val);
+                                        if(table[$2].type==double_tt){
+                                            _gen(lit,0,0,1,table[$2].val_d);
+                                        }else{
+                                            gen(lit,0,table[$2].val);
+                                        }
                                     }else if(table[$2].kind==variable){
                                         gen(lod,0,table[$2].adr);
                                     }
@@ -429,6 +444,8 @@ write_stat:
                                         gen(opr,0,14);
                                     else if(table[$2].type==bool_t)
                                         gen(opr,0,25);
+                                    else if(table[$2].type==double_tt)
+                                        gen(opr,0,14);
                                     else
                                         error(0); 
                                 }   
@@ -463,10 +480,18 @@ read_stat:
                                             if($3>=1){
                                                 gen(lit,0,table[$2].adr);
                                                 gen(opr,0,2);
-                                                gen(opr,0,16);
+                                                if(table[$2].type==double_tt){
+                                                    _gen(opr,0,16,1,0.0);
+                                                }else{
+                                                    gen(opr,0,16);
+                                                }
                                                 gen(sto,0,0);
                                             }else{
-                                                gen(opr,0,16);
+                                                if(table[$2].type==double_tt){
+                                                    _gen(opr,0,16,1,0.0);
+                                                }else{
+                                                    gen(opr,0,16);
+                                                }
                                                 gen(sto,0,table[$2].adr);
                                             }
                                         }
@@ -592,39 +617,37 @@ term:
 factor:
     LPAREN expression RPAREN {}
     |var  array_loc {
-                        if(table[$2].kind==constant){
-                            gen(lit,0,table[$1].val);
-                        }else{
-                            if($2>=1){
-                                if(table[$1].kind==variable){
+                        switch(table[$1].kind){
+                            case constant:
+                                if($2>=1){
+                                    syntax_error("constant have no index.");
+                                }
+                                if(table[$1].type==double_tt){
+                                    _gen(lit,0,0,1,table[$1].val_d);
+                                }else{
+                                    gen(lit,0,table[$1].val);
+                                }
+                                break;
+                            case variable:
+                                if($2>=1){
+                                    if(!table[$1].array){
+                                        char s[50];
+                                        sprintf(s,"variable %s is not an array.", table[$1].name);
+                                        syntax_error(s);
+                                    }
                                     gen(lit,0,table[$1].adr);
                                     gen(opr,0,2);
                                     gen(lod,0,0);
                                     list_del_last(array_ids);
                                 }else{
-                                    error(0);
+                                    gen(lod,0,table[$1].adr);
                                 }
-                            }else{
-                                switch(table[$1].kind){
-                                    case constant:
-                                        gen(lit,0,table[$1].val);
-                                        break;
-                                    case variable:
-                                        if (table[$1].array)
-                                        {
-                                            gen(lod,0,table[$1].adr+0);
-                                        }else
-                                        {
-                                            gen(lod,0,table[$1].adr);
-                                        }
-                                        break;
-                                    case procedur:
-                                        error(21);
-                                        break;
-                                    }
+                                break;
+                            case procedur:
+                                syntax_error("procedur is not supported yet.");
+                                break;
                             }
-                        }
-            }
+                    }
     |var SPLUS  {
                     if(table[$1].array==0){
                         gen(lod,0,table[$1].adr);
@@ -688,6 +711,10 @@ factor:
                     }
                 gen(lit,0,num);
             }
+    |NUM_D  {
+                num_d=$1;
+                _gen(lit,0,0,1,$1);
+            }
     ;
 
 /*
@@ -715,12 +742,16 @@ int main(int argc,char *argv[])
 {
     int i;
     listswitch=false;
+    int print_table=0;
     if (argc > 1) {
         for (i = 1; i < argc; i++)
         {
             if (strcmp(argv[i], "-c")==0)
             {
                 listswitch=true;
+            }else if (strcmp(argv[i], "-t")==0)
+            {
+                print_table=1;
             }
             else if ((strcmp(argv[i], "-f")==0) && (argc > i+1))
             {
@@ -759,7 +790,8 @@ int main(int argc,char *argv[])
     
     else
         printf("%d errors in PL/0 program\n",err);
-
-    printTable(0);
+    if(print_table){
+        printTable(0);
+    }
     return 0;
 }

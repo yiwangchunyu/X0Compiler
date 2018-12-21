@@ -11,6 +11,7 @@ int lev=0;
 int tx=0;
 int dx=0;
 int num;
+double num_d;
 int size;
 int array;
 struct list* array_size;
@@ -23,7 +24,7 @@ struct list{
     struct list *next;
 };
 enum object{constant,variable,procedur};
-enum type_e{int_t,char_t, bool_t, none_t};
+enum type_e{int_t,char_t, double_tt, bool_t, none_t};
 enum object kind;
 enum type_e type;
 
@@ -39,6 +40,7 @@ struct table1{
 	enum object kind;
 	enum type_e type;
 	int val,adr,size,array,array_dim;
+	double val_d;
 	struct list* array_size;
 	};
 struct table1 table[TXMAX+1];
@@ -165,11 +167,17 @@ void enter(enum object k){
 	switch(k)
 		{
 		case constant:
-			if(num>AMAX){
-				error(31);
-				num=0;
+			if(type==double_tt){
+				table[tx].val=0;
+				table[tx].val_d=num_d;
+			}else{
+				if(num>AMAX){
+					error(31);
+					num=0;
 				}
-			table[tx].val=num;
+				table[tx].val=num;
+				table[tx].val_d=0;
+			}
 			table[tx].type=type;
 			break;
 			
@@ -213,7 +221,7 @@ void printTable(int tofile)
 	int array_size0=0;
 	printf("****************************************************************************************************************************************************\n");
 	printf("table:\n");
-	printf("%15s%15s%15s%15s%15s%15s%15s%15s%15s\n", "name", "kind", "val", "type", "adr", "size", "array", "array_dim", "array_size");
+	printf("%15s%15s%15s%15s%15s%15s%15s%15s%15s%15s\n", "name", "kind", "val", "val_d", "type", "adr", "size", "array", "array_dim", "array_size");
 	for(i=0;i<=tx;i++)
 	{
 		switch(table[i].kind)
@@ -236,6 +244,9 @@ void printTable(int tofile)
 			case char_t:
 				strcpy(type, "char");
 				break;
+			case double_tt:
+				strcpy(type, "double");
+				break;
 			case bool_t:
 				strcpy(type, "bool");
 				break;
@@ -245,7 +256,7 @@ void printTable(int tofile)
 		}
 		char ss[50];
 		list_prints(table[i].array_size,ss);
-		printf("%15s%15s%15d%15s%15d%15d%15d%15d%15s\n", table[i].name, kind, table[i].val, type, table[i].adr, table[i].size, table[i].array, table[i].array_dim, ss);
+		printf("%15s%15s%15d%15lf%15s%15d%15d%15d%15d%15s\n", table[i].name, kind, table[i].val, table[i].val_d, type, table[i].adr, table[i].size, table[i].array, table[i].array_dim, ss);
 	}
 	printf("****************************************************************************************************************************************************\n");
 }
