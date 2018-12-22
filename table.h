@@ -55,7 +55,7 @@ struct procReg1 procReg;
 int array_len(struct list* head)
 {
 	struct list* each = head;
-	int len=0;
+	int len=1;
 	if(head==NULL){
 		len=0;
 	}else{
@@ -188,7 +188,7 @@ void enter(enum object k){
 				table[tx].array=array;
 				table[tx].array_dim=array_dim;
 				table[tx].array_size=array_size;
-				dx += array_len(array_size);
+				dx += array_len(table[tx].array_size);
 			}else{
 				dx++;
 			}

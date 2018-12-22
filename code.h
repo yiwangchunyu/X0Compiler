@@ -115,10 +115,26 @@ void interpret()
 	int ti=tx;
 	while(ti>=0){
 		if(table[ti].kind==variable){
-			if(table[ti].type==double_tt){
-				s[table[ti].adr].type=double_tt;
+			if(table[ti].array){
+				int len = array_len(table[tx].array_size);
+				int tj;
+				if(table[ti].type==double_tt){
+					for(tj=table[ti].adr;tj<(table[ti].adr+len);tj++){
+						s[tj].type=double_tt;
+					}
+					
+				}else{
+					for(tj=table[ti].adr;tj<(table[ti].adr+len);tj++){
+						s[tj].type=int_t;
+					}
+				}
+
 			}else{
-				s[table[ti].adr].type=int_t;
+				if(table[ti].type==double_tt){
+					s[table[ti].adr].type=double_tt;
+				}else{
+					s[table[ti].adr].type=int_t;
+				}
 			}
 		}
 		ti--;
@@ -407,7 +423,7 @@ void interpret()
 					if(s[t].type==double_tt){
 							code_error("top of the stack is a double so that we cannot lod from a double address.");
 					}
-					if(s[base(i.l,b,s)+i.a].type==double_tt){
+					if(s[base(i.l,b,s)+s[t].vi].type==double_tt){
 						s[t].type=double_tt;
 						s[t].vd=s[base(i.l,b,s)+s[t].vi].vd;
 					}else{
