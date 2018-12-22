@@ -109,10 +109,20 @@ rnote		"*/"
 						return NUM_D;
 					}
 
-'[^'\n]'			{
-							yylval.number=(int)(yytext[1]);
-							return NUM;
-						}
+'[^'\n]'	{
+				yylval.number=(int)(yytext[1]);
+				return NUM;
+			}
+
+"'\\n'"		{
+				yylval.number='\n';
+				return NUM;
+			}
+
+"'\\t'"		{
+				yylval.number='\t';
+				return NUM;
+			}
 
 {ID}        {
 				yylval.ident=(char *)malloc(strlen(yytext)+1);

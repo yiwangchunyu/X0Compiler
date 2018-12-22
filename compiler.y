@@ -1,5 +1,5 @@
 %token  <ident> ID 
-%token  <number> NUM
+%token  <number> NUM NUM_C
 %token  <number_d> NUM_D
 %token  <type>  INT CHAR DOUBLE BOOL CONST TRUE FALSE
 %token  PLUS MINUS TIMES SLASH EQL NEQ LES LEQ GTR GEQ MOD XOR ODD SPLUS SMINUS UMINUS AND OR NOT
