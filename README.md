@@ -5,6 +5,6 @@ make
 ./compiler -t -c src
 
 
--t: show symbol table  
--c: show pcode  
-src: your source code file  
+-t: 	show symbol table  
+-c: 	show pcode  
+src: 	your source code file  
