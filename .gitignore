@@ -4,3 +4,4 @@ compiler.tab.c
 compiler.tab.h
 lex.yy.c
 fin.txt
+core

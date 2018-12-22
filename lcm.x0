@@ -1,0 +1,21 @@
+main
+{
+	int a;
+	int b;
+	int aa;
+	int bb;
+	int r;
+	read a;
+	read b;
+	r=1;
+	aa=a;
+	bb=b;
+	while(r!=0)
+	{
+		r=aa%bb;
+		aa=bb;
+		bb=r;
+	}
+	write a*b/aa;
+}
+

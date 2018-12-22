@@ -19,8 +19,9 @@ rnote		"*/"
 
 %% 
 [ \t]	{;}
-[\n]	{line++;}
-{lnote}[^{lnote}{rnote}]*{rnote}	{printf("***********note************\n");
+\n		{line++;}
+\r\n	{line++;}
+{lnote}[^{lnote}{rnote}]*{rnote}	{
 										char* c = yytext;
 										while(*c!='\0'){
 											if(*c=='\n'){

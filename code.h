@@ -73,17 +73,16 @@ void gen(enum fct x,int y,int z)
 void listcode( )
 {
 	int i;
-
-	printf("****************************************************************************************************************************************************\n");
-	printf("pcode:\n");
-	printf("%15s %15s %15s %15s %15s %15s\n","id","f","l","a","isd","d");
 	if(listswitch==true){
+		printf("****************************************************************************************************************************************************\n");
+		printf("pcode:\n");
+		printf("%15s %15s %15s %15s %15s %15s\n","id","f","l","a","isd","d");
 		for(i=0;i<=cx-1;i++){
 			printf("%15d %15s %15d %15d %15d %15lf\n",i,mnemonic[(int)code[i].f],code[i].l,code[i].a,code[i].isd,code[i].d);
 			//fprintf(fa,"%2d	%5s	%3d	%5d\n",i,mnemonic[(int)code[i].f],code[i].l,code[i].a);
 			}
-		}
-	printf("****************************************************************************************************************************************************\n");
+		printf("****************************************************************************************************************************************************\n");
+	}
 }
 
 
@@ -106,7 +105,7 @@ void interpret()
 	struct instruction i;
 	/*int s[STACKSIZE];*/
 	struct stack s[STACKSIZE];
-	printf("********Start PL/0*********\n");
+	printf("********Start X0*********\n");
  	//fprintf(fa1,"********Start PL/0*********\n");
 	s[0].vi=0;s[0].vd=0.0;s[0].type=int_t;
 	s[1].vi=0;s[1].vd=0.0;s[1].type=int_t;
@@ -156,9 +155,7 @@ void interpret()
 			case opr:
 				switch(i.a){
 					case 0:
-						t=b-1;
-						p=s[t+3].vi;
-						b=s[t+2].vi;
+						p=0;
 						break;
 					case 1:
 						if(i.isd){
@@ -257,7 +254,7 @@ void interpret()
 						if(s[t].type==double_tt||s[t+1].type==double_tt){
 							code_error("tops of the stack are doubles so that we do not know if one is equals to another.");
 						}
-						if(s[t].vi==s[t+1].vi)
+						if(s[t].vi!=s[t+1].vi)
 							s[t].vi=1;
 						else
 							s[t].vi=0;
@@ -510,6 +507,6 @@ void interpret()
 				break;
 			}
 		}while(p!=0);
-		printf("\n********End PL/0***********\n");
+		printf("\n********End X0***********\n");
 		fclose(fa2);
 }

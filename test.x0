@@ -1,0 +1,13 @@
+main
+{
+	int a;
+	int b;
+	char rt;
+	char sp;
+	a=0;
+	rt='\n';
+	sp=' ';
+	write a;
+	write rt;
+	write a;
+}

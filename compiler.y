@@ -171,7 +171,9 @@ var:
     ID  {
             int i = position ($1);
             if(i<=0){
-                syntax_error("variable undefined!");
+                char s[50];
+                sprintf(s,"variable %s undefined!", $1);
+                syntax_error(s);
             }
             $$ = i;
             if(table[i].array){
