@@ -1,5 +1,5 @@
 #include "table.h"
-#define CXMAX 200
+#define CXMAX 1000
 #define LOOPMAX 50
 
 int cx,cx1,cx2;
