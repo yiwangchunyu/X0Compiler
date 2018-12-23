@@ -1,0 +1,27 @@
+main
+{
+	const char sp=' ';
+	const char rt='\n';
+	int i;
+	int a[10];
+
+	/*测试do while与continue*/
+	i=0;
+	do{
+		if(odd i)
+		{
+			i++;
+			continue;
+		}else{
+			a[i]=i;
+			i++;
+		}
+	}while(i<10);
+	/*打印输出*/
+	for(i=0;i<10;i++)
+	{
+		write a[i];
+		write sp;
+	}
+	write rt;
+}

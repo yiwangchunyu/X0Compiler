@@ -1,0 +1,39 @@
+main
+{
+	const char sp=' ';
+	const char rt='\n';
+	int a;
+	int b;
+	double c;
+	double d;
+	a=1;
+	b=3;
+	c=2.5;
+	d=6.3;
+	write a;
+	write sp;
+	write b;
+	write sp;
+	write c;
+	write sp;
+	write d;
+	write rt;
+
+	/*整数与浮点数的互相运算*/
+	a=d/c;
+	d=c/2;
+
+	write a;
+	write sp;
+	write b;
+	write sp;
+	write c;
+	write sp;
+	write d;
+	write rt;
+
+	/*整数与浮点数的互相比较*/
+	if(a<c)
+		write c*3/5+1;
+
+}

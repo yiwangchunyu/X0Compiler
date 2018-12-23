@@ -1,0 +1,36 @@
+main
+{
+	const char sp=' ';
+	const char rt='\n';
+	int i;
+	int j;
+	int a[10][10];
+	int c;
+	c=0;
+	/*测试嵌套循环与break*/
+	for(i=0;i<10;i++)
+	{
+		if(i==5)
+		{
+			break;
+		}
+		for(j=0;j<10;j++)
+		{
+			a[i][j]=c++;
+			if(j==6)
+			{
+				break;
+			}
+		}
+	}
+	/*打印输出*/
+	for(i=0;i<10;i++)
+	{
+		for(j=0;j<10;j++)
+		{
+			write a[i][j];
+			write sp;
+		}
+		write rt;
+	}
+}

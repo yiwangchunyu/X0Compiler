@@ -1,0 +1,16 @@
+main
+{
+	const char sp=' ';
+	const char rt='\n';
+	const bool t=true;
+	const bool f=false;
+	int a;
+	bool b;
+	b=0;
+	a=1;
+	b = (f and t) or a;
+	write b;
+	write sp;
+	b=not b;
+	write b;
+}

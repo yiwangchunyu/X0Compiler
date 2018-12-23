@@ -1,0 +1,18 @@
+main
+{
+	const char sp=' ';
+	const char rt='\n';
+	char c;
+	int i;
+	c='A';
+	for(i=1;i<=64;i++)
+	{
+		write c;
+		c=c+1;
+		write sp;
+		if(i%26==0)
+		{
+			write rt;
+		}
+	}
+}

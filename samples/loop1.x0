@@ -1,0 +1,25 @@
+main
+{
+	const char sp=' ';
+	const char rt='\n';
+	int i;
+	int a[10];
+
+	/*测试for循环与break*/
+	for(i=0;i<10;i++)
+	{
+		a[i]=i;
+		if(i==5)
+		{
+			break;
+		}
+	}
+	/*打印输出*/
+	for(i=0;i<10;i++)
+	{
+		write a[i];
+		write sp;
+	}
+	write rt;
+
+}

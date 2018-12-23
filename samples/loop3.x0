@@ -1,0 +1,27 @@
+main
+{
+	const char sp=' ';
+	const char rt='\n';
+	int i;
+	int a[10];
+
+	/*测试repeat until循环与exit*/
+	for(i=0;i<10;i++)
+	{
+		a[i]=i;
+	}
+	/*打印输出*/
+	i=0;
+	repeat
+	{
+		write a[i];
+		write sp;
+		if(i==5)
+		{
+			exit;
+		}
+		i++;
+	}until(i>=10);
+	write rt;
+
+}

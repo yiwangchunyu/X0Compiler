@@ -1,0 +1,18 @@
+main
+{
+	const char sp=' ';
+	int a;
+	int b;
+	a=4;
+	b=7;
+	write b%a;
+	write sp;
+	write a^b;
+	write sp;
+	write odd a;
+	write sp;
+	b=a++;
+	write a;
+	write sp;
+	write b;
+}
