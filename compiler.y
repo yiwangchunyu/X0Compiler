@@ -525,7 +525,7 @@ expression:
                                 gen(sto,0,0);
                             }else{
                                 gen(sto,0,table[$1].adr);
-                                /*gen(lod,0,table[$1].adr);*/
+                                gen(lod,0,table[$1].adr);
                             }
                         }
     | simple_expr {}

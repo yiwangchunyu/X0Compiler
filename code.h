@@ -35,6 +35,9 @@ struct loop loopReg[LOOPMAX];
 int loop_pos=0;
 int loop_level=0;
 
+int become_level=0;
+int pop_stack=0;
+
 struct stack{
 	int vi;
 	double vd;
@@ -412,6 +415,9 @@ void interpret()
 						fprintf(fa2,"%s",s[t].vi==0?"false":"true");
 						t=t-1;
 						break;
+					case 26: /*pop stack*/
+						t=t-1;
+						break;
 				}
 				break;	
 			case lod:
@@ -449,17 +455,25 @@ void interpret()
 					if(s[base(i.l,b,s)+s[t-1].vi].type==double_tt){
 						if(s[t].type==double_tt){
 							s[base(i.l,b,s)+s[t-1].vi].vd=s[t].vd;
+							s[t-1].vd=s[t].vd;
+							s[t-1].type=s[t].type;
 						}else{
 							s[base(i.l,b,s)+s[t-1].vi].vd=s[t].vi;
+							s[t-1].vd=s[t].vi;
+							s[t-1].type=s[t].type;
 						}
 					}else{
 						if(s[t].type==double_tt){
 							s[base(i.l,b,s)+s[t-1].vi].vi=(int)s[t].vd;
+							s[t-1].vi=(int)s[t].vd;
+							s[t-1].type=s[t].type;
 						}else{
 							s[base(i.l,b,s)+s[t-1].vi].vi=s[t].vi;
+							s[t-1].vi=s[t].vi;
+							s[t-1].type=s[t].type;
 						}
 					}
-					t=t-2;
+					t=t-1;
 				}
 				else
 				{
