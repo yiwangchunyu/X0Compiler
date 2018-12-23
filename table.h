@@ -5,7 +5,7 @@
 #define AL 20
 #define LEVMAX 3
 #define AMAX 65535
-#define STACKSIZE 1000000
+#define STACKSIZE 100000
 
 int lev=0;
 int tx=0;

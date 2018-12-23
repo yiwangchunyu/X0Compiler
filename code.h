@@ -455,22 +455,22 @@ void interpret()
 					if(s[base(i.l,b,s)+s[t-1].vi].type==double_tt){
 						if(s[t].type==double_tt){
 							s[base(i.l,b,s)+s[t-1].vi].vd=s[t].vd;
+							s[t-1].type=s[base(i.l,b,s)+s[t-1].vi].type;
 							s[t-1].vd=s[t].vd;
-							s[t-1].type=s[t].type;
 						}else{
 							s[base(i.l,b,s)+s[t-1].vi].vd=s[t].vi;
+							s[t-1].type=s[base(i.l,b,s)+s[t-1].vi].type;
 							s[t-1].vd=s[t].vi;
-							s[t-1].type=s[t].type;
 						}
 					}else{
 						if(s[t].type==double_tt){
 							s[base(i.l,b,s)+s[t-1].vi].vi=(int)s[t].vd;
+							s[t-1].type=s[base(i.l,b,s)+s[t-1].vi].type;
 							s[t-1].vi=(int)s[t].vd;
-							s[t-1].type=s[t].type;
 						}else{
 							s[base(i.l,b,s)+s[t-1].vi].vi=s[t].vi;
+							s[t-1].type=s[base(i.l,b,s)+s[t-1].vi].type;
 							s[t-1].vi=s[t].vi;
-							s[t-1].type=s[t].type;
 						}
 					}
 					t=t-1;
