@@ -511,7 +511,7 @@ expression_stat:
 
 expression:
     var array_loc   {
-                        if(table[$2].kind==constant){
+                        if(table[$1].kind==constant){
                             syntax_error("constant cannot be writen.");
                         }else{
                             if($2>=1){
