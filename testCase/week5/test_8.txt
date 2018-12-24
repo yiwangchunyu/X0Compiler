@@ -3,8 +3,8 @@ bool a;
 bool b;
 int x;
 int y;
-a = 1;
-b = 0;
+a = true;
+b = false;
 write (a and b);
 write (a or b);
 write (not a);
@@ -14,13 +14,13 @@ read y;
 a = x>y;
 if(a){
   write x;
-  b = 0;
+  b = false;
 }
 else{
   write y;
-  b = 1;
+  b = true;
 }
 write(b);
 
 }
-/* ä¸æˆ–éè¿ç®—ç¬¦å¯ä»¥æ ¹æ®è‡ªå·±å®šä¹‰çš„å®é™…æƒ…å†µè°ƒæ•´ */
+/* Óë»ò·ÇÔËËã·û¿ÉÒÔ¸ù¾İ×Ô¼º¶¨ÒåµÄÊµ¼ÊÇé¿öµ÷Õû */

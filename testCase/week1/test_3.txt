@@ -1,0 +1,14 @@
+main{
+char c;
+int x;
+int y;
+int m;
+read x;
+read y;
+m=(x*x+y*y)/2;
+c=97;
+write m;
+write c; /*应该输出对应字符*/
+write (c+1); /*应该输出数值*/
+}
+/*输入两个数x,y；输出两个数平方的平均数。检测字符型变量的值*/

@@ -1,0 +1,17 @@
+main{
+int i;
+int j;
+char c;
+c=97;
+for(i=0;i<10;i=i+1){
+    for(j=0;j<10;){        
+        if(j>i) 
+          write(10*i+j);
+        else
+          write(j);
+        j=j+1;
+    }   
+}
+write(c);
+}
+/*遍历0-99，若为两位数输出1，对于个位数大于十位数的数输出其本身，否则只输出个位*/

@@ -1,0 +1,14 @@
+main{
+int i;
+int sum;
+int mul;
+i=1;
+sum=0;
+while(i<=10){
+  sum = sum+i;
+  i=i+1;
+}
+write sum;
+}
+
+/*Êä³ö1~10µÄºÍ*/

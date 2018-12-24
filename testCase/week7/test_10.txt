@@ -1,0 +1,27 @@
+function add(int a,int b){
+   int m;
+   m = a+b;
+   return m;
+}
+
+function sub(int a,int b){
+  int n;
+  n = a-b;
+  return n;
+}
+
+main{
+ int x;
+ int y;
+ int m;
+ int n;
+ read x;
+ read y;
+ m = add(x,y);
+ n = sub(x,y);
+ write m;
+ write n;
+ write (add(m,sub(2,1)));
+}
+
+/*输入两个数，借用定义的函数计算两个数的和与差，并将结果输出。可以根据自己编译器情况修改定义和调用函数的语法*/

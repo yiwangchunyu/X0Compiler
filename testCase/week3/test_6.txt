@@ -1,0 +1,18 @@
+main{
+int a;
+int b;
+read a;
+if(a<0)
+  b=1;
+if(a<100)
+  b=a%3;
+else
+  b=a%4;
+switch(b){
+  case 1: write 1;break;
+  case 2: write 2;break;
+  case 3: write 3;break;
+  default: write 0;
+}
+}
+/*读入一个数a,a小于0：输出1，a大于0小于100：输出除以3的余数，a大于100：输出a除以4的余数*/
