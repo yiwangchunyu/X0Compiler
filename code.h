@@ -37,6 +37,7 @@ int loop_level=0;
 
 int become_level=0;
 int pop_stack=0;
+int array_id=0;
 
 struct stack{
 	int vi;
@@ -426,6 +427,10 @@ void interpret()
 					if(s[t].type==double_tt){
 							code_error("top of the stack is a double so that we cannot lod from a double address.");
 					}
+					if(s[t].vi>=table[array_id].adr+array_len(table[array_id].array_size)){
+						/*printf("%d %d %d\n", table[array_id].adr, array_len(table[array_id].array_size), s[t].vi);*/
+						code_error("\narray index out of range.");
+					}
 					if(s[base(i.l,b,s)+s[t].vi].type==double_tt){
 						s[t].type=double_tt;
 						s[t].vd=s[base(i.l,b,s)+s[t].vi].vd;
@@ -451,6 +456,10 @@ void interpret()
 				{
 					if(s[t-1].type==double_tt){
 							code_error("top of the stack is a double so that we cannot lod from a double address.");
+					}
+					if(s[t-1].vi>=table[array_id].adr+array_len(table[array_id].array_size)){
+						/*printf("%d %d %d\n", table[array_id].adr, array_len(table[array_id].array_size), s[t-1].vi);*/
+						code_error("\narray index out of range.");
 					}
 					if(s[base(i.l,b,s)+s[t-1].vi].type==double_tt){
 						if(s[t].type==double_tt){

@@ -1,0 +1,31 @@
+main{
+int p[10][10];
+int i;
+int j;
+int a;
+int b;
+i=0;
+while(i<10){
+   j=i;
+   while(j<10){
+     p[i][j] = p[j][i] = i*j;
+     j=j+1;
+   }
+   i = i+1;
+}
+read a;
+read b;
+if(a<10){
+  if(b<10){
+    write(p[a][b]);
+  }
+  else
+    write(b);
+}
+else{
+   write(a);
+   if(b>=10)
+     write(b);
+}
+}
+/*若读入两个小于10的数，输出这两个数的乘积，否则，输出>=10的值。*/

@@ -178,6 +178,7 @@ var:
             $$ = i;
             if(table[i].array){
                 array_ids = list_add(array_ids,i);
+                array_id = i;
             }
         }
     /*

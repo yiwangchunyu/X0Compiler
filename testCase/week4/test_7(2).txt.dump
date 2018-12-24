@@ -1,0 +1,15 @@
+main{
+const char rt='\n';
+int i;
+int p[10];
+i=0;
+repeat{
+p[i]=i;
+}until(++i==10);
+--i;
+repeat{
+write p[i];
+write rt;
+}until(--i<0);
+}
+/*输出0~9;可根据语法定义将自增/自减符号移动至变量后面*/
