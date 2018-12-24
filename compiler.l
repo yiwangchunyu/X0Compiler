@@ -65,8 +65,8 @@ NUM         ([0-9])+
 "continue"	{return CONTINUE;}
 "main"     {return MAIN;}
 "const"		{return CONST;}
-"true"		{return TRUE;}
-"false"		{return FALSE;}
+"true"		{yylval.number=1;return NUM;}
+"false"		{yylval.number=0;return NUM;}
 "if"     {return IF;}
 "else"   {return ELSE;}
 "while"  {return WHILE;}

@@ -1,7 +1,7 @@
 %token  <ident> ID 
 %token  <number> NUM NUM_C
 %token  <number_d> NUM_D
-%token  <type>  INT CHAR DOUBLE BOOL CONST TRUE FALSE
+%token  <type>  INT CHAR DOUBLE BOOL CONST
 %token  PLUS MINUS TIMES SLASH EQL NEQ LES LEQ GTR GEQ MOD XOR ODD SPLUS SMINUS UMINUS AND OR NOT
 %token  LPAREN RPAREN LBRACKETS RBRACKETS LBRACE RBRACE 
 %token  COMMA SEMICOLON PERIOD BECOMES COLON
@@ -101,18 +101,12 @@ const_dec:
                                                 num=$5;
                                                 enter(constant);
                                             } 
-    |CONST BOOL ID BECOMES TRUE SEMICOLON   {
+    |CONST BOOL ID BECOMES NUM SEMICOLON    {
                                                 type=bool_t;
                                                 strcpy(id,$3);
-                                                num=1;
+                                                num=$5;
                                                 enter(constant);
-                                            }  
-    |CONST BOOL ID BECOMES FALSE SEMICOLON  {
-                                                type=bool_t;
-                                                strcpy(id,$3);
-                                                num=0;
-                                                enter(constant);
-                                            } 
+                                            }
     ;
 
 declaration_list:
